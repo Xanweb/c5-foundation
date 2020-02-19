@@ -1,0 +1,15 @@
+{
+    "name": "xanweb/c5-foundation",
+    "description": "Concrete5 Foundation",
+    "keywords": ["concrete5", "concrete5-v8", "library"],
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Xanweb\\Foundation\\": "src/"
+        }
+    },
+    "support": {
+        "source": "https://github.com/Xanweb/c5-foundation"
+    }
+}
