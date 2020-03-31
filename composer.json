@@ -4,10 +4,16 @@
     "keywords": ["concrete5", "concrete5-v8", "library"],
     "type": "library",
     "license": "MIT",
+    "require": {
+        "php": ">=7.2"
+    },
     "autoload": {
         "psr-4": {
             "Xanweb\\Foundation\\": "src/"
-        }
+        },
+        "files": [
+            "bootstrap/app.php"
+        ]
     },
     "support": {
         "source": "https://github.com/Xanweb/c5-foundation"
