@@ -10,10 +10,14 @@
     "autoload": {
         "psr-4": {
             "Xanweb\\Foundation\\": "src/"
-        },
-        "files": [
-            "bootstrap/app.php"
-        ]
+        }
+    },
+    "extra" : {
+        "concrete5" : {
+            "providers" : [
+                "Xanweb\\Foundation\\ServiceProvider"
+            ]
+        }
     },
     "support": {
         "source": "https://github.com/Xanweb/c5-foundation"
