@@ -40,7 +40,7 @@ trait TimeStampableTrait
     /**
      * @ORM\PrePersist
      */
-    public function setCreated()
+    public function setCreated(): void
     {
         $this->createdAt = new DateTime();
     }
@@ -48,7 +48,7 @@ trait TimeStampableTrait
     /**
      * @ORM\PreUpdate
      */
-    public function setUpdated()
+    public function setUpdated(): void
     {
         $this->updatedAt = new DateTime();
     }

@@ -1,6 +1,7 @@
 <?php
 namespace Xanweb\Foundation\Entity\Service;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Concrete\Core\Support\Facade\Application;
 
@@ -12,7 +13,7 @@ abstract class EntityService implements ServiceInterface
     protected $entityManager;
 
     /**
-     * @var \Doctrine\ORM\EntityRepository
+     * @var EntityRepository
      */
     private $repo;
 
@@ -24,9 +25,9 @@ abstract class EntityService implements ServiceInterface
     /**
      * Gets the repository for the entity class.
      *
-     * @return \Doctrine\ORM\EntityRepository
+     * @return EntityRepository
      */
-    protected function repo()
+    protected function repo(): EntityRepository
     {
         if (!$this->repo) {
             $this->repo = $this->entityManager->getRepository($this->getEntityClass());
@@ -43,6 +44,7 @@ abstract class EntityService implements ServiceInterface
     public function createEntity()
     {
         $app = Application::getFacadeApplication();
+
         return $app->make($this->getEntityClass());
     }
 
@@ -51,7 +53,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::getList()
      */
-    public function getList()
+    public function getList(): array
     {
         return $this->repo()->findAll();
     }
@@ -61,7 +63,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::getSortedList()
      */
-    public function getSortedList($orderBy = [])
+    public function getSortedList($orderBy = []): array
     {
         return $this->repo()->findBy([], $orderBy);
     }
@@ -97,7 +99,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::update()
      */
-    public function update($entity, array $data = [])
+    public function update($entity, array $data = []): bool
     {
         $entity->setPropertiesFromArray($data);
 
@@ -112,7 +114,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::bulkSave()
      */
-    public function bulkSave(array $entities)
+    public function bulkSave(array $entities): void
     {
         foreach ($entities as $entity) {
             $this->entityManager->persist($entity);
@@ -126,7 +128,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::delete()
      */
-    public function delete($entity)
+    public function delete($entity): bool
     {
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
@@ -139,13 +141,12 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::bulkDelete()
      */
-    public function bulkDelete(array $entities)
+    public function bulkDelete(array $entities): void
     {
         foreach ($entities as $entity) {
             $this->entityManager->remove($entity);
         }
-        $this->entityManager->flush();
 
-        return true;
+        $this->entityManager->flush();
     }
 }

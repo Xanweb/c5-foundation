@@ -8,7 +8,7 @@ interface ServiceInterface
      *
      * @return string
      */
-    public function getEntityClass();
+    public function getEntityClass(): string;
 
     /**
      * Create New Entity instance.
@@ -22,7 +22,7 @@ interface ServiceInterface
      *
      * @return \Xanweb\Foundation\ConcreteObject[] the entities
      */
-    public function getList();
+    public function getList(): array;
 
     /**
      * Finds all entities in the repository sorted by given fields.
@@ -31,7 +31,7 @@ interface ServiceInterface
      *
      * @return \Xanweb\Foundation\ConcreteObject[] the entities
      */
-    public function getSortedList($orderBy = []);
+    public function getSortedList($orderBy = []): array;
 
     /**
      * Finds the entity by its primary key / identifier.
@@ -59,14 +59,14 @@ interface ServiceInterface
      *
      * @return bool
      */
-    public function update($entity, array $data = []);
+    public function update($entity, array $data = []): bool;
 
     /**
      * Persist a list of entities and flush all changes.
      *
      * @param array $entities
      */
-    public function bulkSave(array $entities);
+    public function bulkSave(array $entities): void;
 
     /**
      * Delete Entity.
@@ -75,12 +75,12 @@ interface ServiceInterface
      *
      * @return bool
      */
-    public function delete($entity);
+    public function delete($entity): bool;
 
     /**
      * Delete a list of entities and flush all changes.
      *
      * @param array $entities
      */
-    public function bulkDelete(array $entities);
+    public function bulkDelete(array $entities): void;
 }

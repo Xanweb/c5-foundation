@@ -22,7 +22,7 @@ trait ApplicationTrait
             $this->app = Facade::getFacadeApplication();
         }
 
-        if (!is_null($make)) {
+        if ($make !== null) {
             return $this->app->make($make);
         }
 

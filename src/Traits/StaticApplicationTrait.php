@@ -14,7 +14,7 @@ trait StaticApplicationTrait
     {
         $app = Application::getFacadeApplication();
 
-        if (!is_null($make)) {
+        if ($make !== null) {
             return $app->make($make);
         }
 
