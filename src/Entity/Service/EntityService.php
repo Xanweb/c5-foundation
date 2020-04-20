@@ -53,7 +53,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::getList()
      */
-    public function getList(): array
+    public function getList()
     {
         return $this->repo()->findAll();
     }
@@ -63,7 +63,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::getSortedList()
      */
-    public function getSortedList($orderBy = []): array
+    public function getSortedList($orderBy = [])
     {
         return $this->repo()->findBy([], $orderBy);
     }

@@ -17,7 +17,7 @@ abstract class C5Runner
         return false;
     }
 
-    public static function boot(): void
+    public static function boot()
     {
         $aliases = static::getClassAliases();
         if (!empty($aliases)) {
@@ -52,7 +52,7 @@ abstract class C5Runner
      *
      * @return array
      */
-    protected static function getClassAliases(): array
+    protected static function getClassAliases()
     {
         return [];
     }
@@ -62,7 +62,7 @@ abstract class C5Runner
      *
      * @return array
      */
-    protected static function getServiceProviders(): array
+    protected static function getServiceProviders()
     {
         return [];
     }
@@ -72,7 +72,7 @@ abstract class C5Runner
      *
      * @return array
      */
-    protected static function getRoutesClasses(): array
+    protected static function getRoutesClasses()
     {
         return [];
     }
