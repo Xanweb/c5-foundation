@@ -1,9 +1,9 @@
 <?php
 namespace Xanweb\Foundation\Entity\Service;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Concrete\Core\Support\Facade\Application;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 abstract class EntityService implements ServiceInterface
 {
@@ -24,8 +24,6 @@ abstract class EntityService implements ServiceInterface
 
     /**
      * Gets the repository for the entity class.
-     *
-     * @return EntityRepository
      */
     protected function repo(): EntityRepository
     {

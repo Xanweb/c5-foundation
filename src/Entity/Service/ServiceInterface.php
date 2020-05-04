@@ -45,8 +45,6 @@ interface ServiceInterface
     /**
      * Create Entity.
      *
-     * @param array $data
-     *
      * @return \Xanweb\Foundation\ConcreteObject
      */
     public function create(array $data = []);
@@ -55,7 +53,6 @@ interface ServiceInterface
      * Update Entity.
      *
      * @param \Xanweb\Foundation\ConcreteObject $entity
-     * @param array $data
      *
      * @return bool
      */
@@ -63,8 +60,6 @@ interface ServiceInterface
 
     /**
      * Persist a list of entities and flush all changes.
-     *
-     * @param array $entities
      */
     public function bulkSave(array $entities);
 
@@ -79,8 +74,6 @@ interface ServiceInterface
 
     /**
      * Delete a list of entities and flush all changes.
-     *
-     * @param array $entities
      */
     public function bulkDelete(array $entities);
 }

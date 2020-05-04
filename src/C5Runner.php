@@ -14,7 +14,6 @@ abstract class C5Runner
      */
     private function __construct()
     {
-        return false;
     }
 
     public static function boot()

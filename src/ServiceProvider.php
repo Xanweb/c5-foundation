@@ -1,8 +1,8 @@
 <?php
 namespace Xanweb\Foundation;
 
-use Concrete\Core\User\User;
 use Concrete\Core\Foundation\Service\Provider as BaseServiceProvider;
+use Concrete\Core\User\User;
 
 class ServiceProvider extends BaseServiceProvider
 {
