@@ -97,7 +97,7 @@ abstract class EntityService implements ServiceInterface
      *
      * @see ServiceInterface::update()
      */
-    public function update($entity, array $data = []): bool
+    public function update($entity, array $data = [])
     {
         $entity->setPropertiesFromArray($data);
 
