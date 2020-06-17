@@ -1,0 +1,31 @@
+<?php
+namespace Xanweb\Foundation\Service;
+
+use Concrete\Core\Foundation\Service\Provider as CoreServiceProvider;
+
+abstract class Provider extends CoreServiceProvider
+{
+    private static $registered = [];
+
+    final public function register(): void
+    {
+        if ($this->isRegistered()) {
+            return;
+        }
+
+        $this->_register();
+        $this->markAsRegistered();
+    }
+
+    abstract protected function _register(): void;
+
+    private function markAsRegistered(): void
+    {
+        self::$registered[static::class] = true;
+    }
+
+    public function isRegistered(): bool
+    {
+        return isset(self::$registered[static::class]);
+    }
+}

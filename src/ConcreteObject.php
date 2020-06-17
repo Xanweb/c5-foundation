@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 abstract class ConcreteObject extends CoreObject implements \JsonSerializable
 {
-    public function setPropertiesFromArray($arr)
+    public function setPropertiesFromArray($arr): void
     {
         foreach ($arr as $key => $prop) {
             $setter = 'set' . ucfirst($key);
@@ -37,7 +37,7 @@ abstract class ConcreteObject extends CoreObject implements \JsonSerializable
         return $jsonObj;
     }
 
-    protected function jsonSerializeRelatedObj($key, $o, $jsonObj)
+    protected function jsonSerializeRelatedObj($key, $o, $jsonObj): void
     {
         if (!($o instanceof ArrayCollection) && method_exists($o, 'getID')) {
             $jsonObj->{$key . 'ID'} = $o->getID();
