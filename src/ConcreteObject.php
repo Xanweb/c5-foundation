@@ -6,13 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 abstract class ConcreteObject extends CoreObject implements \JsonSerializable
 {
-    public function setPropertiesFromArray($arr): void
+    public function setPropertiesFromArray($arr)
     {
         foreach ($arr as $key => $prop) {
             $setter = 'set' . ucfirst($key);
             // we prefer passing by setter method
             if (method_exists($this, $setter)) {
-                call_user_func([$this, $setter], $prop);
+                $this->$setter($prop);
             } else {
                 $this->{$key} = $prop;
             }
