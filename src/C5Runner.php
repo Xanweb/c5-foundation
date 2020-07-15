@@ -40,7 +40,7 @@ abstract class C5Runner
                 if (is_subclass_of($routeListClass, 'Concrete\Core\Routing\RouteListInterface')) {
                     $router->loadRouteList($app->build($routeListClass));
                 } else {
-                    throw new \Exception(t(get_called_class() . ':getRoutesClass: RoutesClass should be instanceof Concrete\Core\Routing\RouteListInterface'));
+                    throw new \Exception(t(static::class . ':getRoutesClass: RoutesClass should be instanceof Concrete\Core\Routing\RouteListInterface'));
                 }
             }
         }
