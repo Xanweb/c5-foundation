@@ -91,6 +91,7 @@ trait BlockControllerTrait
     public function getSets()
     {
         $sets = parent::getSets();
+
         $validator = $this->app->make(SessionValidator::class);
         if ($validator->hasActiveSession()) {
             $sessionBag = $this->app->make('session')->getFlashBag();

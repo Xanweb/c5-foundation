@@ -24,10 +24,7 @@ class ServiceProvider extends BaseServiceProvider
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function provides()
+    public function provides(): array
     {
         return ['user', 'http/request', 'site/active'];
     }
