@@ -3,6 +3,8 @@ namespace Xanweb\Foundation;
 
 use Concrete\Core\Http\Request;
 use Concrete\Core\User\User;
+use Xanweb\Foundation\Config\JavascriptAssetDefaults;
+use Xanweb\Foundation\Route\RouteList;
 use Xanweb\Foundation\Service\Provider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -22,6 +24,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind('site/active', static function ($app) {
             return $app['site']->getSite();
         });
+        $this->app->singleton(JavascriptAssetDefaults::class);
+
+        $router = Route::getFacadeRoot();
+        $router->loadRouteList($this->app->build(RouteList::class));
     }
 
     public function provides(): array

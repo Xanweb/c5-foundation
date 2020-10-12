@@ -9,7 +9,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Xanweb\\Foundation\\": "src/"
+            "Xanweb\\Foundation\\": "src/",
+            "Xanweb\\Foundation\\Controller\\": "controllers/"
         }
     },
     "extra" : {
