@@ -3,6 +3,7 @@ namespace Xanweb\Foundation;
 
 use Concrete\Core\Http\Request;
 use Concrete\Core\User\User;
+use Concrete\Core\Support\Facade\Route;
 use Xanweb\Foundation\Config\JavascriptAssetDefaults;
 use Xanweb\Foundation\Route\RouteList;
 use Xanweb\Foundation\Service\Provider as BaseServiceProvider;

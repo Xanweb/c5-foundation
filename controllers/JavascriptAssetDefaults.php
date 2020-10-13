@@ -8,19 +8,23 @@ use Xanweb\Foundation\Config\JavascriptAssetDefaults as JavascriptAssetDefaultCo
 
 class JavascriptAssetDefaults extends Controller
 {
-    private function getJsConfig($items)
+    private function getJsConfig(array $items)
     {
         $content = '{';
+        $lastKey = array_keys($items)[count($items) - 1];
         foreach ($items as $key => $value) {
             $content .= '"' . $key . '": ';
             if (is_array($value)) {
-                $content .= $this->getJsConfig($value) . ',';
+                $content .= $this->getJsConfig($value);
             } else {
                 if (substr(str_replace(' ', '', $value), 0, 8) == 'function') {
-                    $content .= $value . ',';
+                    $content .= $value;
                 }else {
-                    $content .= json_encode($value) . ',';
+                    $content .= json_encode($value);
                 }
+            }
+            if ($lastKey != $key) {
+                $content .= ',';
             }
         }
         $content .= '}';

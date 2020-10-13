@@ -20,7 +20,11 @@ class JavascriptAssetDefaults implements ApplicationAwareInterface
 
     public function set($key, $value)
     {
-        $this->items = array_set($this->items, $key, $value);
+        if (array_has($this->items, $key)) {
+            array_set($this->items, $key, $value);
+        } else {
+            $this->items = array_add($this->items, $key, $value);
+        }
     }
 
     public function get($key = null)
