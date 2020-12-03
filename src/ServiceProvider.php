@@ -1,8 +1,12 @@
 <?php
 namespace Xanweb\Foundation;
 
+use Concrete\Core\Asset\AssetList;
 use Concrete\Core\Http\Request;
 use Concrete\Core\User\User;
+use Concrete\Core\Support\Facade\Route;
+use Xanweb\Foundation\Config\JavascriptAssetDefaults;
+use Xanweb\Foundation\Route\RouteList;
 use Xanweb\Foundation\Service\Provider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -22,10 +26,22 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind('site/active', static function ($app) {
             return $app['site']->getSite();
         });
+        $this->app->singleton(JavascriptAssetDefaults::class);
+
+        $router = Route::getFacadeRoot();
+        $router->loadRouteList($this->app->build(RouteList::class));
+
+        $this->registerAssets();
     }
 
     public function provides(): array
     {
         return ['user', 'http/request', 'site/active'];
+    }
+
+    protected function registerAssets(): void
+    {
+        $al = AssetList::getInstance();
+        $al->register('javascript-localized', 'xw/c5-foundation/defaults', '/xw/c5-foundation/js/defaults.js');
     }
 }
