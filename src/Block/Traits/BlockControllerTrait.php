@@ -4,6 +4,8 @@ namespace Xanweb\Foundation\Block\Traits;
 use Concrete\Core\Block\Block;
 use Concrete\Core\Permission\Checker as Permissions;
 use Concrete\Core\Session\SessionValidator;
+use Concrete\Core\Utility\Service\Validation\Numbers;
+use Illuminate\Support\Str;
 
 /**
  * Trait BlockControllerTrait.
@@ -15,6 +17,7 @@ use Concrete\Core\Session\SessionValidator;
  */
 trait BlockControllerTrait
 {
+    protected $realIdentifier;
     protected $uniqID;
 
     /**
@@ -23,36 +26,45 @@ trait BlockControllerTrait
     public function getUniqueId(): string
     {
         if (!$this->uniqID) {
-            $prefix = strtolower($this->getIdentifier());
-            $b = $this->getBlockObject(); /* @var Block $b */
-            if (is_object($b) && $b->getProxyBlock()) {
-                $prefix = strtolower($b->getProxyBlock()->getController()->getIdentifier());
-            }
-
-            $this->uniqID = $prefix . $this->app['helper/validation/identifier']->getString(4);
+            $prefix = strtolower($this->getRealIdentifier());
+            $this->uniqID = $prefix . '_' . Str::quickRandom(3);
         }
 
         return $this->uniqID;
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @see CoreBlockController::isValidControllerTask()
+     * Get Uniq Identifier for Block.
      */
-    public function isValidControllerTask($method, $parameters = [])
+    public function getRealIdentifier(): string
     {
-        $result = false;
-        if (parent::isValidControllerTask($method, $parameters)) {
-            $bID = array_pop($parameters);
-            if (is_int($bID) || (is_string($bID) && is_numeric($bID))) {
-                if ($this->bID === (int) $bID) {
-                    $result = true;
-                }
+        if (!$this->realIdentifier) {
+            $b = $this->getBlockObject(); /* @var Block $b */
+            if (is_object($b) && $proxyBlock = $b->getProxyBlock()) {
+                $this->realIdentifier = (string) $proxyBlock->getController()->getIdentifier();
+            } else {
+                $this->realIdentifier = (string) $this->getIdentifier();
             }
         }
 
-        return $result;
+        return $this->realIdentifier;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Concrete\Core\Block\BlockController::isValidControllerTask()
+     */
+    public function isValidControllerTask($method, $parameters = [])
+    {
+        if (parent::isValidControllerTask($method, $parameters)) {
+            $bID = array_pop($parameters);
+            if ((new Numbers())->integer($bID, 1, PHP_INT_MAX) && (int) $this->bID === (int) $bID) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -86,7 +98,7 @@ trait BlockControllerTrait
     /**
      * {@inheritdoc}
      *
-     * @see CoreBlockController::getSets()
+     * @see \Concrete\Core\Block\BlockController::getSets()
      */
     public function getSets()
     {
@@ -94,9 +106,10 @@ trait BlockControllerTrait
 
         $validator = $this->app->make(SessionValidator::class);
         if ($validator->hasActiveSession()) {
+            $blockIdentifier = $this->getRealIdentifier();
             $sessionBag = $this->app->make('session')->getFlashBag();
-            if ($sessionBag->has('block_message_' . $this->bID)) {
-                $messages = $sessionBag->get('block_message_' . $this->bID);
+            if ($sessionBag->has('block_message_' . $blockIdentifier)) {
+                $messages = $sessionBag->get('block_message_' . $blockIdentifier);
                 foreach ($messages as [$key, $value, $isHTML]) {
                     $sets[$key] = $value;
                     $sets[$key . 'IsHTML'] = $isHTML;
@@ -110,6 +123,6 @@ trait BlockControllerTrait
     public function flash(string $key, string $value, bool $isHTML = false): void
     {
         $session = $this->app->make('session');
-        $session->getFlashBag()->add('block_message_' . $this->bID, [$key, $value, $isHTML]);
+        $session->getFlashBag()->add('block_message_' . $this->getRealIdentifier(), [$key, $value, $isHTML]);
     }
 }
