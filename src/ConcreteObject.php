@@ -21,7 +21,7 @@ abstract class ConcreteObject extends CoreObject implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        $dh = app('date');
+        $dh = c5app('date');
         $jsonObj = new \stdClass();
         $array = get_object_vars($this);
         foreach ($array as $key => $v) {

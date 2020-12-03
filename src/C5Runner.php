@@ -33,7 +33,7 @@ abstract class C5Runner
         $routeListClasses = static::getRoutesClasses();
         if (is_array($routeListClasses) && !empty($routeListClasses)) {
             /**
-             * @var \Concrete\Core\Routing\Router
+             * @var \Concrete\Core\Routing\Router $router
              */
             $router = Route::getFacadeRoot();
             foreach ($routeListClasses as $routeListClass) {
