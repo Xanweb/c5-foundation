@@ -1,36 +1,6 @@
-# ignore system files
-.DS_Store
-thumbs.db
-__MACOSX
-._*
-.*swp
-.*swo
-.env
-.ftpquota
-
 # ignore composer files
-composer.phar
 composer.lock
 /vendor/
-
-# ignore domain security files
-.htaccess
-.htpasswd
-
-/nbproject/*
-/concrete/*
-index.php
-
-# ignore error log
-error_log
-
-# ignore Aptana and Eclipse project files
-.project
-/.idea/
-
-# ignore Eclipse-specific files
-/.settings/
-/.buildpath
 
 # ignore PHP symbol map
 __IDE_SYMBOLS__.php
