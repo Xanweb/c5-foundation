@@ -1,4 +1,5 @@
 <?php
+
 namespace Xanweb\Foundation\Config;
 
 use Illuminate\Support\Collection;
