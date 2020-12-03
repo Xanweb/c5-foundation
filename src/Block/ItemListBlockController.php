@@ -202,13 +202,19 @@ abstract class ItemListBlockController extends CoreBlockController
     public function validate($args)
     {
         $e = $this->app->make(ErrorList::class);
+
+        $this->validateItems($args, $e);
+
+        return $e;
+    }
+
+    protected function validateItems($args, ErrorList $e): void
+    {
         $sanitizedData = $this->sanitizeData($args);
 
         foreach ($sanitizedData as $i => $item) {
             $this->validateItem($i + 1, $item, $e);
         }
-
-        return $e;
     }
 
     /**
