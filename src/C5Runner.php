@@ -47,9 +47,7 @@ abstract class C5Runner
     }
 
     /**
-     * Classes to be registered as aliases in \Concrete\Core\Foundation\ClassAliasList.
-     *
-     * @return array
+     * @deprecated use /application/config/app.php instead
      */
     protected static function getClassAliases()
     {
@@ -57,9 +55,7 @@ abstract class C5Runner
     }
 
     /**
-     * Get Service Providers Class Names.
-     *
-     * @return array
+     * @deprecated use /application/config/app.php instead
      */
     protected static function getServiceProviders()
     {

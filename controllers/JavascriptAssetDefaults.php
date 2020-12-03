@@ -1,4 +1,5 @@
 <?php
+
 namespace Xanweb\Foundation\Controller;
 
 use Concrete\Core\Controller\Controller;
@@ -26,7 +27,7 @@ class JavascriptAssetDefaults extends Controller
 
     public function getJavascript(): Response
     {
-        $content = 'window.xanweb = ' . $this->jsAssetDefaults->toJson() .';';
+        $content = 'window.xanweb=' . $this->jsAssetDefaults->toJson() .';';
 
         return $this->createJavascriptResponse($content);
     }
@@ -37,7 +38,7 @@ class JavascriptAssetDefaults extends Controller
 
         return $rf->create(
             $content,
-            200,
+            Response::HTTP_OK,
             [
                 'Content-Type' => 'application/javascript; charset=' . APP_CHARSET,
                 'Content-Length' => strlen($content),
