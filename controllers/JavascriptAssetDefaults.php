@@ -27,7 +27,7 @@ class JavascriptAssetDefaults extends Controller
 
     public function getJavascript(): Response
     {
-        $content = 'window.xanweb=' . $this->jsAssetDefaults->toJson() .';';
+        $content = 'window.xanweb=' . $this->jsAssetDefaults->toJson() . ';';
 
         return $this->createJavascriptResponse($content);
     }
