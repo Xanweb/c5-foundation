@@ -2,20 +2,22 @@
 namespace Xanweb\Foundation;
 
 use Concrete\Core\Asset\AssetList;
-use Concrete\Core\Http\Request;
+use Concrete\Core\Foundation\ClassAliasList;
+use Concrete\Core\Http\Request as HttpRequest;
 use Concrete\Core\User\User;
 use Concrete\Core\Support\Facade\Route;
+use Xanweb\Foundation\Request;
 use Xanweb\Foundation\Route\RouteList;
-use Xanweb\Foundation\Service\Provider as BaseServiceProvider;
+use Xanweb\Foundation\Service\Provider as FoundationProvider;
 
-class ServiceProvider extends BaseServiceProvider
+class ServiceProvider extends FoundationProvider
 {
     protected function _register(): void
     {
         $this->app->bindIf(User::class, null, true);
         $aliases = [
             'user' => User::class,
-            'http/request' => Request::class,
+            'http/request' => HttpRequest::class,
         ];
 
         foreach ($aliases as $alias => $class) {
@@ -25,6 +27,13 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind('site/active', static function ($app) {
             return $app['site']->getSite();
         });
+
+        $classAliasList = ClassAliasList::getInstance();
+        $classAliasList->registerMultiple([
+            'RequestUser' => Request\User::class,
+            'RequestPage' => Request\Page::class,
+            'RequestSite' => Request\Site::class,
+        ]);
 
         $router = Route::getFacadeRoot();
         $router->loadRouteList($this->app->build(RouteList::class));
