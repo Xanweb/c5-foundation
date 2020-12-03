@@ -25,7 +25,7 @@ abstract class ConcreteObject extends CoreObject implements \JsonSerializable
         $jsonObj = new \stdClass();
         $array = get_object_vars($this);
         foreach ($array as $key => $v) {
-            if ($v && ($v instanceof \DateTime)) {
+            if ($v && ($v instanceof \DateTimeInterface)) {
                 $jsonObj->{$key} = $dh->formatDate($v);
             } elseif (is_object($v)) {
                 $this->jsonSerializeRelatedObj($key, $v, $jsonObj);
