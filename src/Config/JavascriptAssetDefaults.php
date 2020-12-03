@@ -1,37 +1,44 @@
 <?php
 namespace Xanweb\Foundation\Config;
 
-use Concrete\Core\Application\ApplicationAwareInterface;
-use Concrete\Core\Application\ApplicationAwareTrait;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
-class JavascriptAssetDefaults implements ApplicationAwareInterface
+class JavascriptAssetDefaults extends Collection
 {
-    use ApplicationAwareTrait;
-
-    private $items = [];
-
     public function __construct()
     {
-        $this->items = [
-            'i18n' => [
-            ],
-        ];
+        parent::__construct(['i18n' => []]);
     }
 
-    public function set($key, $value)
+    /**
+     * Get the collection of items as JSON.
+     *
+     * @param  int  $options
+     * @return string
+     */
+    public function toJson($options = 0)
     {
-        if (array_has($this->items, $key)) {
-            array_set($this->items, $key, $value);
-        } else {
-            $this->items = array_add($this->items, $key, $value);
-        }
-    }
+        $array = $this->jsonSerialize();
 
-    public function get($key = null)
-    {
-        if ($key) {
-            return array_get($this->items, $key);
+        $placeholders = [];
+        array_walk_recursive($array, static function(&$value) use (&$placeholders) {
+            // We don't want to encode passed js functions
+            // So we will set placeholders before encoding to restore them after that.
+            if (\str_starts_with(\str_replace(' ', '', $value), 'function')) {
+                $placeholders[$placeholder = Str::quickRandom(8)] = $value;
+
+                $value = $placeholder;
+            }
+        });
+
+        $encoded = json_encode($array, $options);
+
+        if (empty($placeholders)) {
+            return $encoded;
         }
-        return $this->items;
+
+        // Restore js functions as they are
+        return str_replace(array_keys($placeholders), array_values($placeholders), $encoded);
     }
 }

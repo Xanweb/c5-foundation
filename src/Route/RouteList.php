@@ -6,12 +6,12 @@ use Concrete\Core\Routing\Router;
 
 class RouteList implements RouteListInterface
 {
-    public function loadRoutes(Router $router)
+    public function loadRoutes(Router $router): void
     {
         $router->buildGroup()
             ->setNamespace('Xanweb\Foundation\Controller')
             ->routes(function (Router $r) {
-                $r->get('/xw/c5-foundation/js/defaults.js', 'JavascriptAssetDefaults::getJavascript');
+                $r->get('/xw/js/defaults.js', 'JavascriptAssetDefaults::getJavascript');
             });
     }
 }

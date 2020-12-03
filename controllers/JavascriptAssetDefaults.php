@@ -4,37 +4,29 @@ namespace Xanweb\Foundation\Controller;
 use Concrete\Core\Controller\Controller;
 use Concrete\Core\Http\ResponseFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Xanweb\Foundation\Config\BeforeRenderDefaultAssetJS;
 use Xanweb\Foundation\Config\JavascriptAssetDefaults as JavascriptAssetDefaultConfigs;
 
 class JavascriptAssetDefaults extends Controller
 {
-    private function getJsConfig(array $items)
+    /**
+     * @var JavascriptAssetDefaultConfigs
+     */
+    private $jsAssetDefaults;
+
+    public function on_start()
     {
-        $content = '{';
-        $lastKey = array_keys($items)[count($items) - 1];
-        foreach ($items as $key => $value) {
-            $content .= '"' . $key . '": ';
-            if (is_array($value)) {
-                $content .= $this->getJsConfig($value);
-            } else {
-                if (substr(str_replace(' ', '', $value), 0, 8) == 'function') {
-                    $content .= $value;
-                }else {
-                    $content .= json_encode($value);
-                }
-            }
-            if ($lastKey != $key) {
-                $content .= ',';
-            }
-        }
-        $content .= '}';
-        return $content;
+        $config = new JavascriptAssetDefaultConfigs();
+
+        $event = new BeforeRenderDefaultAssetJS($config);
+        $this->app['director']->dispatch(BeforeRenderDefaultAssetJS::NAME, $event);
+
+        $this->jsAssetDefaults = $event->getJavascriptAssetDefaults();
     }
 
     public function getJavascript(): Response
     {
-        $items = $this->app->make(JavascriptAssetDefaultConfigs::class)->get();
-        $content = 'window.xanweb = '. $this->getJsConfig($items) .';';
+        $content = 'window.xanweb = ' . $this->jsAssetDefaults->toJson() .';';
 
         return $this->createJavascriptResponse($content);
     }
