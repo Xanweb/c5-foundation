@@ -16,6 +16,9 @@
         }
     },
     "extra" : {
+        "branch-alias": {
+            "dev-develop": "1.x-dev"
+        },
         "concrete5" : {
             "providers" : [
                 "Xanweb\\Foundation\\ServiceProvider"
