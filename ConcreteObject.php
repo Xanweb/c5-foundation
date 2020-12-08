@@ -1,4 +1,5 @@
 <?php
+
 namespace Xanweb\Foundation;
 
 use Concrete\Core\Foundation\ConcreteObject as CoreObject;
