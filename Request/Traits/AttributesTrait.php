@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation\Request;
+namespace Xanweb\Foundation\Request\Traits;
 
 trait AttributesTrait
 {
