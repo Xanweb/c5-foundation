@@ -4,6 +4,7 @@ namespace Xanweb\Foundation;
 
 use Concrete\Core\Foundation\ClassAliasList;
 use Concrete\Core\Http\Request as HttpRequest;
+use Concrete\Core\Multilingual\Page\Section\Section;
 use Concrete\Core\User\User;
 use Xanweb\Foundation\Request;
 use Xanweb\Foundation\Service\Provider as FoundationProvider;
@@ -31,6 +32,7 @@ class ServiceProvider extends FoundationProvider
             'RequestUser' => Request\User::class,
             'RequestPage' => Request\Page::class,
             'RequestSite' => Request\Site::class,
+            'MultilingualSection' => Section::class,
         ]);
     }
 
