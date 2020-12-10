@@ -27,7 +27,7 @@ class JavascriptAssetDefaults extends Collection
             // We don't want to encode passed js functions
             // So we will set placeholders before encoding to restore them after that.
             if (\str_starts_with(\str_replace(' ', '', $value), 'function')) {
-                $placeholders[$placeholder = '__PLACEHOLDER__' . Str::quickRandom(8)] = $value;
+                $placeholders['"' . ($placeholder = '__PLACEHOLDER__' . Str::quickRandom(8)) . '"'] = $value;
 
                 $value = $placeholder;
             }
