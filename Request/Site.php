@@ -2,12 +2,13 @@
 namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\Page\Page as ConcretePage;
-use Concrete\Core\Support\Facade\Application;
 use Xanweb\Foundation\Request\Page as RequestPage;
+use Xanweb\Foundation\Traits\SingletonTrait;
 
 class Site
 {
-    private static $instance;
+    use SingletonTrait;
+    use AttributesTrait;
 
     /**
      * @var \Concrete\Core\Entity\Site\Site
@@ -21,8 +22,7 @@ class Site
 
     public function __construct()
     {
-        $app = Application::getFacadeApplication();
-        $this->site = $app->make('site/active');
+        $this->site = c5app('site/active');
     }
 
     public static function getSiteHomePageObject(): ?Page
@@ -40,9 +40,9 @@ class Site
 
     public static function getSiteHomePageID(): ?int
     {
-        $rp = self::get();
+        $rs = self::get();
 
-        return $rp->cache['siteHomePageID'] ?? $rp->cache['siteHomePageID'] = $rp->site->getSiteHomePageID();
+        return $rs->cache['siteHomePageID'] ?? $rs->cache['siteHomePageID'] = $rs->site->getSiteHomePageID();
     }
 
     public static function getLocaleHomePageObject(): ?Page
@@ -60,21 +60,21 @@ class Site
 
     public static function getLocaleHomePageID(): ?int
     {
-        $rp = self::get();
-        if (!isset($rp->cache['localeHomePageID'])) {
+        $rs = self::get();
+        if (!isset($rs->cache['localeHomePageID'])) {
             $localeHomePageID = 0;
             $activeLocale = RequestPage::getLocale();
-            foreach ($rp->site->getLocales() as $locale) {
+            foreach ($rs->site->getLocales() as $locale) {
                 if ($locale->getLocale() === $activeLocale) {
                     $localeHomePageID = $locale->getSiteTreeObject()->getSiteHomePageID();
                     break;
                 }
             }
 
-            $rp->cache['localeHomePageID'] = $localeHomePageID;
+            $rs->cache['localeHomePageID'] = $localeHomePageID;
         }
 
-        return $rp->cache['localeHomePageID'];
+        return $rs->cache['localeHomePageID'];
     }
 
     public static function getDisplaySiteName(): string
@@ -84,20 +84,19 @@ class Site
 
     public static function getSiteName(): string
     {
-        $rp = self::get();
+        $rs = self::get();
 
-        return $rp->cache['siteName'] ?? $rp->cache['siteName'] = $rp->site->getSiteName();
+        return $rs->cache['siteName'] ?? $rs->cache['siteName'] = $rs->site->getSiteName();
     }
 
     public static function getAttribute($ak, $mode = false)
     {
-        $cacheKey = 'ak_';
-        $cacheKey .= is_object($ak) ? $ak->getAttributeKeyHandle() : (string)$ak;
-        $cacheKey .= $mode ? "_{$mode}" : '';
+        $rs = self::get();
+        if ($rs->site === null) {
+            return null;
+        }
 
-        $rp = self::get();
-
-        return $rp->cache[$cacheKey] ?? $rp->cache[$cacheKey] = $rp->site->getAttribute($ak, $mode);
+        return self::_getAttribute($rs->site, $ak, $mode);
     }
 
     public function __call($name, $arguments)
@@ -108,19 +107,5 @@ class Site
     public static function __callStatic($name, $arguments)
     {
         return self::get()->site->$name(...$arguments);
-    }
-
-    /**
-     * Gets a singleton instance of this class.
-     *
-     * @return Site
-     */
-    public static function get(): self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
     }
 }

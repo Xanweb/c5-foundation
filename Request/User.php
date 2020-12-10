@@ -2,23 +2,32 @@
 namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\User\User as ConcreteUser;
-use Concrete\Core\Support\Facade\Application;
+use Concrete\Core\User\UserInfo;
+use Xanweb\Foundation\Traits\SingletonTrait;
 
 /**
  * Class User
  *
  * @method static bool isRegistered()
  * @method static bool isSuperUser()
+ * @method static int getUserID()
  * @method static string getUserName()
+ * @method static string getUserEmail()
  */
 class User
 {
-    private static $instance;
+    use SingletonTrait;
+    use AttributesTrait;
 
     /**
      * @var ConcreteUser
      */
     private $user;
+
+    /**
+     * @var UserInfo
+     */
+    private $ui;
 
     /**
      * @var array
@@ -27,8 +36,7 @@ class User
 
     public function __construct()
     {
-        $app = Application::getFacadeApplication();
-        $this->user = $app->make(ConcreteUser::class);
+        $this->user = c5app(ConcreteUser::class);
     }
 
     public static function canAccessDashboard(): bool
@@ -38,6 +46,30 @@ class User
         return $ru->cache['canAccessDashboard'] ?? ($ru->cache['canAccessDashboard'] = ($ru->user->isRegistered() && c5app('helper/concrete/dashboard')->canRead()));
     }
 
+    public static function getUserInfoObject(): ?UserInfo
+    {
+        $ru = self::get();
+        if (!$ru->user->isRegistered()) {
+            return null;
+        }
+
+        if (!isset($ru->ui)) {
+            $ru->ui = $ru->user->getUserInfoObject();
+        }
+
+        return $ru->ui;
+    }
+
+    public static function getAttribute($ak, $mode = false)
+    {
+        $ui = self::getUserInfoObject();
+        if ($ui === null) {
+            return null;
+        }
+
+        return self::_getAttribute($ui, $ak, $mode);
+    }
+
     public function __call($name, $arguments)
     {
         return $this->user->$name(...$arguments);
@@ -45,18 +77,20 @@ class User
 
     public static function __callStatic($name, $arguments)
     {
-        return self::get()->user->$name(...$arguments);
-    }
-
-    /**
-     * Gets a singleton instance of this class.
-     */
-    public static function get(): self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
+        $ru = self::get();
+        if (method_exists($ru->user, $name)) {
+            return $ru->user->$name(...$arguments);
         }
 
-        return self::$instance;
+        $ui = self::getUserInfoObject();
+        if ($ui === null) {
+            return null;
+        }
+
+        if (method_exists($ui, $name)) {
+            return $ui->$name(...$arguments);
+        }
+
+        throw new \LogicException(t('Cannot call non existing method %s->%s.', static::class, $name));
     }
 }

@@ -2,11 +2,12 @@
 namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\Http\Request;
-use Concrete\Core\Support\Facade\Application;
+use Xanweb\Foundation\Traits\SingletonTrait;
 
 class Page
 {
-    private static $instance;
+    use SingletonTrait;
+    use AttributesTrait;
 
     /**
      * @var Request
@@ -20,15 +21,14 @@ class Page
 
     public function __construct()
     {
-        $app = Application::getFacadeApplication();
-        $this->request = $app->make(Request::class);
+        $this->request = c5app(Request::class);
     }
 
     public static function getLocale(): string
     {
         $rp = self::get();
 
-        return $rp->cache['locale'] ?? $rp->cache['locale'] = \get_active_locale();
+        return $rp->cache['locale'] ?? $rp->cache['locale'] = \current_locale();
     }
 
     public static function getLanguage(): string
@@ -43,6 +43,17 @@ class Page
         return $rp->cache['isEditMode'] ?? ($rp->cache['isEditMode'] = (($c = $rp->request->getCurrentPage()) !== null && $c->isEditMode()));
     }
 
+    public static function getAttribute($ak, $mode = false)
+    {
+        $rp = self::get();
+        $c = $rp->request->getCurrentPage();
+        if ($c === null) {
+            return null;
+        }
+
+        return self::_getAttribute($c, $ak, $mode);
+    }
+
     public function __call($name, $arguments)
     {
         $c = $this->request->getCurrentPage();
@@ -54,19 +65,5 @@ class Page
     public static function __callStatic($name, $arguments)
     {
         return self::get()->$name(...$arguments);
-    }
-
-    /**
-     * Gets a singleton instance of this class.
-     *
-     * @return Page
-     */
-    public static function get(): self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
     }
 }
