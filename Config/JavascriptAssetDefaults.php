@@ -13,6 +13,20 @@ class JavascriptAssetDefaults extends Collection
     }
 
     /**
+     * Merge Given Array of items with class items.
+     *
+     * @param array $items
+     *
+     * @return $this
+     */
+    public function mergeWith(array $items): self
+    {
+        $this->items = array_merge($this->items, $items);
+
+        return $this;
+    }
+
+    /**
      * Get the collection of items as JSON.
      *
      * @param  int  $options
