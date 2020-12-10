@@ -3,6 +3,7 @@ namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\Page\Page as ConcretePage;
 use Xanweb\Foundation\Request\Page as RequestPage;
+use Xanweb\Foundation\Request\Traits\AttributesTrait;
 use Xanweb\Foundation\Traits\SingletonTrait;
 
 class Site

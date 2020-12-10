@@ -2,6 +2,7 @@
 namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\Http\Request;
+use Xanweb\Foundation\Request\Traits\AttributesTrait;
 use Xanweb\Foundation\Traits\SingletonTrait;
 
 class Page
