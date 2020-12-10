@@ -26,7 +26,8 @@ class JavascriptAssetDefaults extends Collection
         array_walk_recursive($array, static function(&$value) use (&$placeholders) {
             // We don't want to encode passed js functions
             // So we will set placeholders before encoding to restore them after that.
-            if (\str_starts_with(\str_replace(' ', '', $value), 'function')) {
+            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
+            if (\str_starts_with(\strip_spaces($value), 'function')) {
                 $placeholders['"' . ($placeholder = '__PLACEHOLDER__' . Str::quickRandom(8)) . '"'] = $value;
 
                 $value = $placeholder;
