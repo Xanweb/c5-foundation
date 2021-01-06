@@ -1,7 +1,9 @@
 <?php
+
 namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\Page\Page as ConcretePage;
+use Concrete\Core\Support\Facade\Url;
 use Xanweb\Foundation\Request\Page as RequestPage;
 use Xanweb\Foundation\Request\Traits\AttributesTrait;
 use Xanweb\Foundation\Traits\SingletonTrait;
@@ -26,7 +28,7 @@ class Site
         $this->site = c5app('site/active');
     }
 
-    public static function getSiteHomePageObject(): ?Page
+    public static function getSiteHomePageObject(): ?ConcretePage
     {
         $rs = self::get();
         if (!isset($rs->cache['siteHomePageObject']) && $homePageID = self::getSiteHomePageID()) {
@@ -46,7 +48,7 @@ class Site
         return $rs->cache['siteHomePageID'] ?? $rs->cache['siteHomePageID'] = $rs->site->getSiteHomePageID();
     }
 
-    public static function getLocaleHomePageObject(): ?Page
+    public static function getLocaleHomePageObject(): ?ConcretePage
     {
         $rs = self::get();
         if (!isset($rs->cache['localeHomePageObject']) && $homePageID = self::getLocaleHomePageID()) {
