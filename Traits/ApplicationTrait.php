@@ -1,25 +1,24 @@
 <?php
 namespace Xanweb\Foundation\Traits;
 
-use Concrete\Core\Application\Application;
-use Concrete\Core\Support\Facade\Facade;
+use Concrete\Core\Support\Facade\Application;
 
 trait ApplicationTrait
 {
     /**
-     * @var Application
+     * @var \Concrete\Core\Application\Application
      */
     protected $app;
 
     /**
      * @param string $make [optional]
      *
-     * @return Application|mixed
+     * @return \Concrete\Core\Application\Application|mixed
      */
     protected function app($make = null)
     {
         if (!$this->app) {
-            $this->app = Facade::getFacadeApplication();
+            $this->app = Application::getFacadeApplication();
         }
 
         if ($make !== null) {

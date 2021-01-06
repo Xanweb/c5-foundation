@@ -8,7 +8,7 @@ trait StaticApplicationTrait
     /**
      * @param string $make [optional]
      *
-     * @return \Concrete\Core\Application\Application|object
+     * @return \Concrete\Core\Application\Application|mixed
      */
     protected static function app($make = null)
     {

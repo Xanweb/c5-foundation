@@ -1,4 +1,5 @@
 <?php
+
 namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\Http\Request;
