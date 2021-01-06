@@ -1,4 +1,5 @@
 <?php
+
 namespace Xanweb\Foundation\Block\Traits;
 
 use Concrete\Core\Block\Block;
@@ -27,8 +28,20 @@ trait BlockControllerTrait
      */
     private $blockPage;
 
-    protected $realIdentifier;
-    protected $uniqID;
+    /**
+     * @var Permissions
+     */
+    private $permissions;
+
+    /**
+     * @var string
+     */
+    private $realIdentifier;
+
+    /**
+     * @var string
+     */
+    private $uniqID;
 
     /**
      * Get Uniq Identifier for Block.
@@ -104,13 +117,18 @@ trait BlockControllerTrait
      */
     public function userCanEditBlock(): bool
     {
+        $bp = $this->getPermissionObject();
+
+        return ($bp !== null) ? $bp->canWrite() : false;
+    }
+
+    public function getPermissionObject(): ?Permissions
+    {
         if (!is_object($this->block)) {
-            return false;
+            return null;
         }
 
-        $bp = new Permissions($this->block);
-
-        return $bp->canWrite();
+        return $this->permissions ?? $this->permissions = new Permissions($this->block);
     }
 
     /**
