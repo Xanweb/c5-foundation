@@ -25,7 +25,7 @@ class Site
 
     public function __construct()
     {
-        $this->site = c5app('site/active');
+        $this->site = c5app('site')->getSite();
     }
 
     public static function getSiteHomePageObject(): ?ConcretePage
