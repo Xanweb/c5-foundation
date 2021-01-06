@@ -2,6 +2,9 @@
 
 namespace Xanweb\Foundation\Request\Traits;
 
+/**
+ * @internal
+ */
 trait AttributesTrait
 {
     private static function _getAttribute(object $obj, $ak, $mode = false)
