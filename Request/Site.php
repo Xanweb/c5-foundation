@@ -28,6 +28,11 @@ class Site
         $this->site = c5app('site')->getSite();
     }
 
+    public static function getSiteHomePageURL(): ?\League\URL\URLInterface
+    {
+        return Url::to(static::getSiteHomePageObject());
+    }
+
     public static function getSiteHomePageObject(): ?ConcretePage
     {
         $rs = self::get();
@@ -46,6 +51,11 @@ class Site
         $rs = self::get();
 
         return $rs->cache['siteHomePageID'] ?? $rs->cache['siteHomePageID'] = $rs->site->getSiteHomePageID();
+    }
+
+    public static function getLocaleHomePageURL(): ?\League\URL\URLInterface
+    {
+        return Url::to(static::getLocaleHomePageObject());
     }
 
     public static function getLocaleHomePageObject(): ?ConcretePage
