@@ -7,7 +7,7 @@ use Concrete\Core\Http\Request as HttpRequest;
 use Concrete\Core\Multilingual\Page\Section\Section;
 use Concrete\Core\User\User;
 use Xanweb\Foundation\Request;
-use Xanweb\Foundation\Service\Provider as FoundationProvider;
+use Xanweb\Common\Service\Provider as FoundationProvider;
 
 class ServiceProvider extends FoundationProvider
 {

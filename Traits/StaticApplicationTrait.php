@@ -1,23 +1,8 @@
 <?php
-namespace Xanweb\Foundation\Traits;
 
-use Concrete\Core\Support\Facade\Application;
+namespace Xanweb\Foundation\Traits;
 
 trait StaticApplicationTrait
 {
-    /**
-     * @param string $make [optional]
-     *
-     * @return \Concrete\Core\Application\Application|mixed
-     */
-    protected static function app($make = null)
-    {
-        $app = Application::getFacadeApplication();
-
-        if ($make !== null) {
-            return $app->make($make);
-        }
-
-        return $app;
-    }
+    use \Xanweb\Common\Traits\StaticApplicationTrait;
 }

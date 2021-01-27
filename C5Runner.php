@@ -5,10 +5,11 @@ namespace Xanweb\Foundation;
 use Concrete\Core\Foundation\ClassAliasList;
 use Concrete\Core\Foundation\Service\ProviderList;
 use Concrete\Core\Support\Facade\Route;
+use Xanweb\Common\Traits\StaticApplicationTrait;
 
 abstract class C5Runner
 {
-    use Traits\StaticApplicationTrait;
+    use StaticApplicationTrait;
 
     /**
      * Class to be used Statically.

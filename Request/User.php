@@ -3,8 +3,8 @@ namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\User\User as ConcreteUser;
 use Concrete\Core\User\UserInfo;
+use Xanweb\Common\Traits\SingletonTrait;
 use Xanweb\Foundation\Request\Traits\AttributesTrait;
-use Xanweb\Foundation\Traits\SingletonTrait;
 
 /**
  * Class User

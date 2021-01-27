@@ -3,8 +3,8 @@
 namespace Xanweb\Foundation\Request;
 
 use Concrete\Core\Http\Request;
+use Xanweb\Common\Traits\SingletonTrait;
 use Xanweb\Foundation\Request\Traits\AttributesTrait;
-use Xanweb\Foundation\Traits\SingletonTrait;
 
 class Page
 {

@@ -4,8 +4,8 @@ namespace Xanweb\Foundation;
 
 use Concrete\Core\Asset\AssetList;
 use Concrete\Core\Support\Facade\Route;
+use Xanweb\Common\Service\Provider as FoundationProvider;
 use Xanweb\Foundation\Route\RouteList;
-use Xanweb\Foundation\Service\Provider as FoundationProvider;
 
 class JavascriptDefaultsServiceProvider extends FoundationProvider
 {
