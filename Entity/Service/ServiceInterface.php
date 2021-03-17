@@ -1,6 +1,11 @@
 <?php
 namespace Xanweb\Foundation\Entity\Service;
 
+/**
+ * Interface ServiceInterface
+ *
+ * @template T
+ */
 interface ServiceInterface
 {
     /**
@@ -13,14 +18,14 @@ interface ServiceInterface
     /**
      * Create New Entity instance.
      *
-     * @return \Xanweb\Foundation\ConcreteObject Entity object
+     * @return T
      */
     public function createEntity();
 
     /**
      * Finds all entities in the repository.
      *
-     * @return \Xanweb\Foundation\ConcreteObject[] the entities
+     * @return T[] the entities
      */
     public function getList();
 
@@ -29,30 +34,32 @@ interface ServiceInterface
      *
      * @param array $orderBy
      *
-     * @return \Xanweb\Foundation\ConcreteObject[] the entities
+     * @return T[] the entities
      */
     public function getSortedList($orderBy = []);
 
     /**
      * Finds the entity by its primary key / identifier.
      *
-     * @param mixed    $id          The identifier
+     * @param mixed $id The identifier
      *
-     * @return \Xanweb\Foundation\ConcreteObject|null The entity instance or NULL if the entity can not be found
+     * @return T|null The entity instance or NULL if the entity can not be found
      */
     public function getByID($id);
 
     /**
      * Create Entity.
      *
-     * @return \Xanweb\Foundation\ConcreteObject
+     * @param array $data
+     *
+     * @return T
      */
     public function create(array $data = []);
 
     /**
      * Update Entity.
      *
-     * @param \Xanweb\Foundation\ConcreteObject $entity
+     * @param T $entity
      *
      * @return bool
      */
@@ -60,13 +67,15 @@ interface ServiceInterface
 
     /**
      * Persist a list of entities and flush all changes.
+     *
+     * @param T[] $entities
      */
     public function bulkSave(array $entities);
 
     /**
      * Delete Entity.
      *
-     * @param \Xanweb\Foundation\ConcreteObject $entity
+     * @param T $entity
      *
      * @return bool
      */
@@ -74,6 +83,8 @@ interface ServiceInterface
 
     /**
      * Delete a list of entities and flush all changes.
+     *
+     * @param T[] $entities
      */
     public function bulkDelete(array $entities);
 }
