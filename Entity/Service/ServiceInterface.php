@@ -5,13 +5,14 @@ namespace Xanweb\Foundation\Entity\Service;
  * Interface ServiceInterface
  *
  * @template T
+ * @phpstan-template T
  */
 interface ServiceInterface
 {
     /**
      * Get full entity class name.
      *
-     * @return string
+     * @return class-string<T>
      */
     public function getEntityClass();
 
@@ -19,13 +20,15 @@ interface ServiceInterface
      * Create New Entity instance.
      *
      * @return T
+     * @phpstan-return T
      */
     public function createEntity();
 
     /**
      * Finds all entities in the repository.
      *
-     * @return T[] the entities
+     * @return T[]
+     * @phpstan-return T[]
      */
     public function getList();
 
@@ -34,7 +37,8 @@ interface ServiceInterface
      *
      * @param array $orderBy
      *
-     * @return T[] the entities
+     * @return T[]
+     * @phpstan-return T[]
      */
     public function getSortedList($orderBy = []);
 
@@ -44,6 +48,7 @@ interface ServiceInterface
      * @param mixed $id The identifier
      *
      * @return T|null The entity instance or NULL if the entity can not be found
+     * @phpstan-return T|null
      */
     public function getByID($id);
 
@@ -53,6 +58,7 @@ interface ServiceInterface
      * @param array $data
      *
      * @return T
+     * @phpstan-return T
      */
     public function create(array $data = []);
 
@@ -62,6 +68,7 @@ interface ServiceInterface
      * @param T $entity
      *
      * @return bool
+     * @phpstan-param T $entity
      */
     public function update($entity, array $data = []);
 
@@ -69,6 +76,8 @@ interface ServiceInterface
      * Persist a list of entities and flush all changes.
      *
      * @param T[] $entities
+     *
+     * @phpstan-param T[] $entities
      */
     public function bulkSave(array $entities);
 
@@ -78,6 +87,8 @@ interface ServiceInterface
      * @param T $entity
      *
      * @return bool
+     *
+     * @phpstan-param T $entity
      */
     public function delete($entity);
 
@@ -85,6 +96,8 @@ interface ServiceInterface
      * Delete a list of entities and flush all changes.
      *
      * @param T[] $entities
+     *
+     * @phpstan-param T[] $entities
      */
     public function bulkDelete(array $entities);
 }
