@@ -6,8 +6,8 @@ use Concrete\Core\Foundation\ClassAliasList;
 use Concrete\Core\Http\Request as HttpRequest;
 use Concrete\Core\Multilingual\Page\Section\Section;
 use Concrete\Core\User\User;
-use Xanweb\Foundation\Request;
 use Xanweb\Common\Service\Provider as FoundationProvider;
+use Xanweb\C5\Request\ServiceProvider as RequestServiceProvider;
 
 class ServiceProvider extends FoundationProvider
 {
@@ -27,13 +27,12 @@ class ServiceProvider extends FoundationProvider
             return $app['site']->getSite();
         });
 
-        $classAliasList = ClassAliasList::getInstance();
-        $classAliasList->registerMultiple([
-            'RequestUser' => Request\User::class,
-            'RequestPage' => Request\Page::class,
-            'RequestSite' => Request\Site::class,
+        ClassAliasList::getInstance()->registerMultiple([
             'MultilingualSection' => Section::class,
         ]);
+
+        $requestProvider = new RequestServiceProvider($this->app);
+        $requestProvider->register();
     }
 
     public function provides(): array
