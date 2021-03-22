@@ -156,7 +156,7 @@ abstract class ItemListBlockController extends CoreBlockController
     /**
      * Delete second table items.
      */
-    private function deleteItems(): void
+    protected function deleteItems(): void
     {
         $qb = $this->database()->createQueryBuilder();
         $qb->delete($this->getItemListTable())
@@ -180,11 +180,15 @@ abstract class ItemListBlockController extends CoreBlockController
 
         $this->deleteItems();
 
-        $sanitizedData = $this->sanitizeData($args);
-        if (empty($sanitizedData)) {
+        if (empty($sanitizedData = $this->sanitizeData($args))) {
             return;
         }
 
+        $this->performSaveItems($sanitizedData);
+    }
+
+    protected function performSaveItems(array $sanitizedData): void
+    {
         $insertFields = $this->getItemListTableProps('QUERY_PLACE_HOLDER');
         $this->database()->transactional(function (Connection $db) use ($sanitizedData, $insertFields) {
             $qb = $db->createQueryBuilder()
@@ -202,16 +206,19 @@ abstract class ItemListBlockController extends CoreBlockController
     public function validate($args)
     {
         $e = $this->app->make(ErrorList::class);
-
+        $this->_validate($args, $e);
         $this->validateItems($args, $e);
 
         return $e;
     }
 
-    protected function validateItems($args, ErrorList $e): void
+    protected function _validate(?array $args, ErrorList $e): void
+    {
+    }
+
+    protected function validateItems(?array $args, ErrorList $e): void
     {
         $sanitizedData = $this->sanitizeData($args);
-
         foreach ($sanitizedData as $i => $item) {
             $this->validateItem($i + 1, $item, $e);
         }
@@ -219,10 +226,15 @@ abstract class ItemListBlockController extends CoreBlockController
 
     /**
      * Check if the item is valid.
+     *
+     * @param int $itemNbr
+     * @param array $item
+     * @param ErrorList $e
+     *
+     * @return void
      */
-    protected function validateItem(int $itemNbr, array $item, ErrorList $e): bool
+    protected function validateItem(int $itemNbr, array $item, ErrorList $e)
     {
-        return true;
     }
 
     /**
