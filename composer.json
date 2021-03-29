@@ -8,6 +8,7 @@
         "php": "^7.2",
         "symfony/polyfill-php80": "^1.20",
         "xanweb/c5-common": "^1.0",
+        "xanweb/c5-entity": "^1.0",
         "xanweb/c5-request": "^1.0",
         "xanweb/c5-helpers": "^1.2"
     },
