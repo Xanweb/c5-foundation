@@ -2,25 +2,9 @@
 
 namespace Xanweb\Foundation;
 
-use Concrete\Core\Asset\AssetList;
-use Concrete\Core\Support\Facade\Route;
-use Xanweb\Common\Service\Provider as FoundationProvider;
-use Xanweb\Foundation\Route\RouteList;
-
-class JavascriptDefaultsServiceProvider extends FoundationProvider
+/**
+ * @deprecated use \Xanweb\C5\JsLocalization\ServiceProvider
+ */
+class JavascriptDefaultsServiceProvider extends \Xanweb\C5\JsLocalization\ServiceProvider
 {
-    protected function _register(): void
-    {
-        $router = Route::getFacadeRoot();
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $router->loadRouteList($this->app->build(RouteList::class));
-
-        $this->registerAssets();
-    }
-
-    private function registerAssets(): void
-    {
-        $al = AssetList::getInstance();
-        $al->register('javascript-localized', 'xw/defaults', '/xw/js/defaults.js');
-    }
 }
