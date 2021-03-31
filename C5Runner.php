@@ -7,6 +7,9 @@ use Concrete\Core\Foundation\Service\ProviderList;
 use Concrete\Core\Support\Facade\Route;
 use Xanweb\Common\Traits\StaticApplicationTrait;
 
+/**
+ * @deprecated Use \Xanweb\Foundation\ApplicationBooter
+ */
 abstract class C5Runner
 {
     use StaticApplicationTrait;
