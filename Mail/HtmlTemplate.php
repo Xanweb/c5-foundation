@@ -60,7 +60,7 @@ class HtmlTemplate
 
         if ($htmlContent && $args !== []) {
             $placeHolders = array_map(
-                static function ($v) {return '<!--' . strtoupper($v) . '-->';},
+                static fn ($v) => '<!--' . strtoupper($v) . '-->',
                 array_keys($args)
             );
 
