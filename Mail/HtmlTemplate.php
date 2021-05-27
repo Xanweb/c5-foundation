@@ -21,6 +21,10 @@ class HtmlTemplate
             $locator->addLocation(new FileLocator\PackageLocation($pkgHandle));
         }
 
+        if (ends_with($htmlFileName, '.html')) {
+            $htmlFileName = substr($htmlFileName, 0, -5);
+        }
+
         $lng = Localization::activeLanguage();
         $filePath = implode('/', [
             DIRNAME_MAIL_TEMPLATES,
