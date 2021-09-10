@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation;
+namespace Xanweb\C5\Foundation;
 
 use Concrete\Core\Foundation\ConcreteObject as CoreObject;
 use Xanweb\Common\Traits\JsonSerializableTrait;

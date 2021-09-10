@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation;
+namespace Xanweb\C5\Foundation;
 
 use Concrete\Core\Foundation\ClassAliasList;
 use Concrete\Core\Http\Request as HttpRequest;
@@ -13,7 +13,6 @@ class ServiceProvider extends FoundationProvider
 {
     protected function _register(): void
     {
-        $this->app->bindIf(User::class, null, true);
         $aliases = [
             'user' => User::class,
             'http/request' => HttpRequest::class,

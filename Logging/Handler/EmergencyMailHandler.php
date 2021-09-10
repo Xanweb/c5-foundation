@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation\Logging\Handler;
+namespace Xanweb\C5\Foundation\Logging\Handler;
 
 use Concrete\Core\Config\Repository\Repository as ConfigRepository;
 use Concrete\Core\User\User;
@@ -53,10 +53,12 @@ class EmergencyMailHandler extends MailHandler
         $refererURL = t('Referer URL: %s', $_SERVER['HTTP_REFERER']);
         $url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
+        $method = 'Method: ' . $_SERVER['REQUEST_METHOD'];
+
         $mh = $app->make('mail');
         $mh->setTesting(true);
         $mh->setSubject($_SERVER['SERVER_NAME'] . ': Exception occurred');
-        $mh->setBodyHTML($user . '<br>' . $url . '<br>' . $refererURL . '<br>' . $content);
+        $mh->setBodyHTML($user . '<br>' . $url . '<br>' . $refererURL . '<br>' . $method . '<br>' . $content);
         $mh->to($this->reportEmail);
         try {
             $mh->sendMail();

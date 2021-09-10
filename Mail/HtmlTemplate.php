@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation\Mail;
+namespace Xanweb\C5\Foundation\Mail;
 
 use Concrete\Core\Filesystem\FileLocator;
 use Concrete\Core\Localization\Localization;
@@ -13,7 +13,13 @@ class HtmlTemplate
      */
     private $filePath;
 
-    public function __construct(string $htmlFileName, string $pkgHandle = null)
+    /**
+     * HtmlTemplate Construct.
+     *
+     * @param string $htmlFileName
+     * @param string|null $pkgHandle
+     */
+    public function __construct(string $htmlFileName, ?string $pkgHandle = null)
     {
         $app = Application::getFacadeApplication();
         $locator = $app->make(FileLocator::class);
@@ -29,7 +35,7 @@ class HtmlTemplate
         $filePath = implode('/', [
             DIRNAME_MAIL_TEMPLATES,
             'html',
-            "{$htmlFileName}_{$lng}.html",
+            "{$htmlFileName}_$lng.html",
         ]);
 
         $r = $locator->getRecord($filePath);

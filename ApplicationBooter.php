@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation;
+namespace Xanweb\C5\Foundation;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Routing\RouteListInterface;
@@ -45,7 +45,7 @@ abstract class ApplicationBooter
 
         // Register Event Subscribers
         if (($evtSubscriberClasses = static::getEventSubscribers()) !== []) {
-            $director = $app->make(EventDispatcherInterface::class);
+            $director = $app->make('director');
             foreach ($evtSubscriberClasses as $evtSubscriberClass) {
                 if (is_subclass_of($evtSubscriberClass, EventSubscriberInterface::class)) {
                     /** @noinspection PhpUnhandledExceptionInspection */
@@ -65,7 +65,7 @@ abstract class ApplicationBooter
     abstract protected static function _boot(Application $app): void;
 
     /**
-     * Get Class name for RouteList, must be instance of \Concrete\Core\Routing\RouteListInterface.
+     * Get Class name for RouteList, must be an instance of \Concrete\Core\Routing\RouteListInterface.
      *
      * @return string[]
      */
@@ -75,7 +75,7 @@ abstract class ApplicationBooter
     }
 
     /**
-     * Event Subscribers should be instance of \Symfony\Component\EventDispatcher\EventSubscriberInterface.
+     * Event Subscribers should be an instance of \Symfony\Component\EventDispatcher\EventSubscriberInterface.
      *
      * @return string[]
      */

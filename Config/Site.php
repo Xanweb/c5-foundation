@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation\Config;
+namespace Xanweb\C5\Foundation\Config;
 
 use Concrete\Core\Localization\Localization;
 use Punic\Data as PunicData;

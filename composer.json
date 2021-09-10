@@ -7,22 +7,22 @@
     "require": {
         "php": "^7.4",
         "symfony/polyfill-php80": "^1.20",
-        "xanweb/c5-common": "^1.1",
+        "xanweb/c5-common": "^1.2",
         "xanweb/c5-request": "^1.0",
-        "xanweb/c5-helpers": "^1.2"
+        "xanweb/c5-helpers": "^1.3"
     },
     "autoload": {
         "psr-4": {
-            "Xanweb\\Foundation\\": ""
+            "Xanweb\\C5\\Foundation\\": ""
         }
     },
     "extra" : {
         "branch-alias": {
-            "dev-develop": "1.x-dev"
+            "dev-develop": "2.x-dev"
         },
         "concrete5" : {
             "providers" : [
-                "Xanweb\\Foundation\\ServiceProvider"
+                "Xanweb\\C5\\Foundation\\ServiceProvider"
             ]
         }
     },
