@@ -23,9 +23,7 @@ class ServiceProvider extends FoundationProvider
             $this->app->alias($class, $alias);
         }
 
-        $this->app->bind('site/active', static function ($app) {
-            return $app['site']->getSite();
-        });
+        $this->app->bind('site/active', fn($app) => $app['site']->getSite());
 
         ClassAliasList::getInstance()->registerMultiple([
             'MultilingualSection' => Section::class,

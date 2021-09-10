@@ -2,6 +2,7 @@
 
 namespace Xanweb\Foundation\Logging\Handler;
 
+use Concrete\Core\Config\Repository\Repository as ConfigRepository;
 use Concrete\Core\User\User;
 use Concrete\Core\Support\Facade\Application;
 use Concrete\Core\Support\Facade\Config;
@@ -18,12 +19,12 @@ class EmergencyMailHandler extends MailHandler
      *
      * @var string
      */
-    protected $reportEmail;
+    protected string $reportEmail;
 
     /**
-     * @var \Concrete\Core\Config\Repository\Repository
+     * @var ConfigRepository
      */
-    protected $config;
+    protected ConfigRepository $config;
 
     /**
      * SendExceptionMailHandler constructor.

@@ -13,26 +13,26 @@ class UrlGenerator implements UrlGeneratorContract
     /**
      * @var Request
      */
-    protected $request;
+    protected Request $request;
 
     /**
      * @var ResolverManagerInterface
      */
-    protected $url;
+    protected ResolverManagerInterface $url;
 
     /**
      * The root namespace being applied to controller actions.
      *
      * @var string
      */
-    protected $assetRoot;
+    protected string $assetRoot;
 
     /**
      * The root namespace being applied to controller actions.
      *
      * @var string
      */
-    protected $rootNamespace;
+    protected string $rootNamespace;
 
     /**
      * UrlGenerator constructor.
@@ -55,7 +55,7 @@ class UrlGenerator implements UrlGeneratorContract
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current(): string
     {
         return $this->request->getUri();
     }
