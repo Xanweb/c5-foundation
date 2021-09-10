@@ -1,7 +1,7 @@
 {
     "name": "xanweb/c5-foundation",
-    "description": "Concrete5 Foundation",
-    "keywords": ["concrete5", "concrete5-v8", "library"],
+    "description": "ConcreteCMS Foundation",
+    "keywords": ["ConcreteCMS", "concrete5", "concrete5-v9", "ConcreteCMS-v9", "library"],
     "type": "library",
     "license": "MIT",
     "require": {
