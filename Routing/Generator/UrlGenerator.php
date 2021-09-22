@@ -1,6 +1,6 @@
 <?php
 
-namespace Xanweb\Foundation\Routing\Generator;
+namespace Xanweb\C5\Foundation\Routing\Generator;
 
 use Concrete\Core\Http\Request;
 use Concrete\Core\Url\Resolver\Manager\ResolverManagerInterface;
