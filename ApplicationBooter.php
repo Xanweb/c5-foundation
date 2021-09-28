@@ -21,8 +21,6 @@ abstract class ApplicationBooter
      * Boot up Application.
      *
      * @param Application $app
-     *
-     * @noinspection PhpDocMissingThrowsInspection
      */
     final public static function boot(Application $app): void
     {
@@ -35,8 +33,7 @@ abstract class ApplicationBooter
             $router = Route::getFacadeRoot();
             foreach ($routeListClasses as $routeListClass) {
                 if (is_subclass_of($routeListClass, RouteListInterface::class)) {
-                    /** @noinspection PhpUnhandledExceptionInspection */
-                    $router->loadRouteList($app->build($routeListClass));
+                    $router->loadRouteList($app->make($routeListClass));
                 } else {
                     self::throwInvalidClassRuntimeException('getRoutesClass', $routeListClass, RouteListInterface::class);
                 }
@@ -48,8 +45,7 @@ abstract class ApplicationBooter
             $director = $app->make('director');
             foreach ($evtSubscriberClasses as $evtSubscriberClass) {
                 if (is_subclass_of($evtSubscriberClass, EventSubscriberInterface::class)) {
-                    /** @noinspection PhpUnhandledExceptionInspection */
-                    $director->addSubscriber($app->build($evtSubscriberClass));
+                    $director->addSubscriber($app->make($evtSubscriberClass));
                 } else {
                     self::throwInvalidClassRuntimeException('getEventSubscribers', $evtSubscriberClass, EventSubscriberInterface::class);
                 }
