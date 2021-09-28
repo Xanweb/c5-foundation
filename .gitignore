@@ -6,6 +6,12 @@ composer.lock
 __IDE_SYMBOLS__.php
 .phpstorm.meta.php
 
+# ignore projects files
+.project
+/.idea/
+/nbproject/
+/.vscode/
+
 # phpunit
 .phpunit.result.cache
 
