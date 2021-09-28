@@ -5,7 +5,7 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "^7.4",
+        "php": ">=7.4",
         "symfony/polyfill-php80": "^1.20",
         "xanweb/c5-common": "^1.2",
         "xanweb/c5-request": "^1.2",
