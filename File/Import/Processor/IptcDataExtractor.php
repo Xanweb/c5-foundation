@@ -2,6 +2,7 @@
 
 namespace Xanweb\C5\Foundation\File\Import\Processor;
 
+use Concrete\Core\Attribute\Category\CategoryService;
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Entity\File\Version;
 use Concrete\Core\File\Import\ImportingFile;
@@ -12,6 +13,16 @@ use Xanweb\C5\Foundation\Image\Metadata\IptcMetadataReader;
 
 class IptcDataExtractor implements PostProcessorInterface
 {
+
+    /**
+     * @var CategoryService
+     */
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
 
     public function getPostProcessPriority()
     {
