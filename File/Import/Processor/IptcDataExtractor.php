@@ -8,11 +8,21 @@ use Concrete\Core\Entity\File\Version;
 use Concrete\Core\File\Import\ImportingFile;
 use Concrete\Core\File\Import\ImportOptions;
 use Concrete\Core\File\Import\Processor\PostProcessorInterface;
+use Concrete\Core\File\StorageLocation\Configuration\LocalConfiguration;
+use Concrete\Core\Support\Facade\Application;
+use Imagine\Image\Metadata\DefaultMetadataReader;
+use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Image\Metadata\MetadataBag;
+use Imagine\Image\Metadata\MetadataReaderInterface;
+use Xanweb\C5\Foundation\Image\Metadata\Ifd0MetadataReader;
 use Xanweb\C5\Foundation\Image\Metadata\IptcMetadataReader;
 
 class IptcDataExtractor implements PostProcessorInterface
 {
+
+    private $data;
+
+    private MetadataReaderInterface $reader;
 
     /**
      * @var CategoryService
@@ -31,7 +41,8 @@ class IptcDataExtractor implements PostProcessorInterface
 
     public function shouldPostProcess(ImportingFile $file, ImportOptions $options, Version $importedVersion)
     {
-        return IptcMetadataReader::isSupported() &&
+        return (IptcMetadataReader::isSupported() ||
+            Ifd0MetadataReader::isSupported()) &&
             $file->getFileType()->getName() === 'JPEG';
     }
 
@@ -60,7 +71,7 @@ class IptcDataExtractor implements PostProcessorInterface
 
 
 
-        if ($author = $metadataBag->get('author_byline')) {
+        if ($author = $metadataBag->get('author_title')) {
             $key = $category->getAttributeKeyByHandle('author');
             if (is_object($key)) {
                 $importedVersion->setAttribute($key, $author);
@@ -83,14 +94,54 @@ class IptcDataExtractor implements PostProcessorInterface
 
     protected function getMetadataBag(Version $importedVersion)
     {
-        $size = getimagesize(DIR_BASE . $importedVersion->getRelativePath(), $info);
+        $this->loadData($importedVersion);
 
-        if (false == $size || !isset($info['APP13'])) {
-            return new MetadataBag();
+        return $this->reader->readData($this->data);
+    }
+
+    private function loadData(Version $importedVersion)
+    {
+        if (isset($this->reader) && isset($this->data)) {
+            return;
+        }
+        $info = [];
+        $urlOrAbsolutePath = null;
+        $configuration = null;
+        $fsl = $importedVersion->getFile()->getFileStorageLocationObject();
+        if ($fsl !== null) {
+            $configuration = $fsl->getConfigurationObject();
         }
 
-        $metadataReader = new IptcMetadataReader();
+        $app = Application::getFacadeApplication();
+        $cf = $app->make('helper/concrete/file');
+        if ($configuration !== null) {
+            if ($configuration->hasRelativePath()) {
+                $root = $configuration->getRootPath();
+                $path = $cf->prefix($importedVersion->getPrefix(), $importedVersion->getFileName());
+                $urlOrAbsolutePath = $root . '/' . $path;
+            } elseif ($configuration->hasPublicURL()) {
+                $urlOrAbsolutePath = $configuration->getPublicURLToFile($cf->prefix($importedVersion->getPrefix(), $importedVersion->getFileName()));
+            }
+        }
 
-        return $metadataReader->readData($info['APP13']);
+        $size = false;
+        if ($urlOrAbsolutePath !== null) {
+            $size = getimagesize($urlOrAbsolutePath, $info);
+        }
+
+        if ($size !== false && isset($info['APP13']) && IptcMetadataReader::isSupported()) {
+            $this->reader = new IptcMetadataReader();
+            $this->data = $info['APP13'];
+            return;
+        }
+        if (Ifd0MetadataReader::isSupported()) {
+            $fr = $importedVersion->getFileResource();
+            $this->reader = new Ifd0MetadataReader();
+            $this->data = $fr->read();
+            return;
+        }
+
+        $this->reader = new DefaultMetadataReader();
+        $this->data = '';
     }
 }
