@@ -5,7 +5,6 @@ namespace Xanweb\C5\Foundation;
 use Concrete\Core\Application\Application;
 use Concrete\Core\Routing\RouteListInterface;
 use Concrete\Core\Support\Facade\Route;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 abstract class ApplicationBooter

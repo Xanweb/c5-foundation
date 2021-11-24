@@ -3,55 +3,61 @@
 namespace Xanweb\C5\Foundation\File\Import\Processor;
 
 use Concrete\Core\Attribute\Category\CategoryService;
+use Concrete\Core\Attribute\Category\FileCategory;
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Entity\File\Version;
 use Concrete\Core\File\Import\ImportingFile;
 use Concrete\Core\File\Import\ImportOptions;
 use Concrete\Core\File\Import\Processor\PostProcessorInterface;
-use Concrete\Core\File\StorageLocation\Configuration\LocalConfiguration;
 use Concrete\Core\Support\Facade\Application;
 use Imagine\Image\Metadata\DefaultMetadataReader;
-use Imagine\Image\Metadata\ExifMetadataReader;
 use Imagine\Image\Metadata\MetadataBag;
 use Imagine\Image\Metadata\MetadataReaderInterface;
+use League\Flysystem\FileNotFoundException;
 use Xanweb\C5\Foundation\Image\Metadata\Ifd0MetadataReader;
 use Xanweb\C5\Foundation\Image\Metadata\IptcMetadataReader;
 
 class IptcDataExtractor implements PostProcessorInterface
 {
-
-    private $data;
-
+    protected CategoryService $categoryService;
     private MetadataReaderInterface $reader;
-
-    /**
-     * @var CategoryService
-     */
-    protected $categoryService;
+    private FileCategory $fakc;
+    private string $data;
 
     public function __construct(CategoryService $categoryService)
     {
         $this->categoryService = $categoryService;
     }
 
-    public function getPostProcessPriority()
+    /**
+     * {@inheritDoc}
+     *
+     * @see PostProcessorInterface::getPostProcessPriority()
+     */
+    public function getPostProcessPriority(): int
     {
         return 0;
     }
 
-    public function shouldPostProcess(ImportingFile $file, ImportOptions $options, Version $importedVersion)
+    /**
+     * {@inheritDoc}
+     *
+     * @see PostProcessorInterface::shouldPostProcess()
+     */
+    public function shouldPostProcess(ImportingFile $file, ImportOptions $options, Version $importedVersion): bool
     {
-        return (IptcMetadataReader::isSupported() ||
-            Ifd0MetadataReader::isSupported()) &&
-            $file->getFileType()->getName() === 'JPEG';
+        return (IptcMetadataReader::isSupported() || Ifd0MetadataReader::isSupported()) && $file->getFileType()->getName() === 'JPEG';
     }
 
-    public function postProcess(ImportingFile $file, ImportOptions $options, Version $importedVersion)
+    /**
+     * {@inheritDoc}
+     *
+     * @see PostProcessorInterface::postProcess()
+     */
+    public function postProcess(ImportingFile $file, ImportOptions $options, Version $importedVersion): void
     {
         $metadataBag = $this->getMetadataBag($importedVersion);
-
-        $categoryEntity = $this->categoryService->getByHandle('file');
-        $category = $categoryEntity->getController();
+        $category = $this->getFileAttributeKeyCategory();
 
         if ($title = $metadataBag->get('document_title')) {
             $importedVersion->updateTitle($title);
@@ -69,8 +75,6 @@ class IptcDataExtractor implements PostProcessorInterface
             $importedVersion->updateTags($keywords);
         }
 
-
-
         if ($author = $metadataBag->get('author_title')) {
             $key = $category->getAttributeKeyByHandle('author');
             if (is_object($key)) {
@@ -84,26 +88,31 @@ class IptcDataExtractor implements PostProcessorInterface
                 $importedVersion->setAttribute($key, $copyright);
             }
         }
-
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see ProcessorInterface::readConfiguration()
+     */
     public function readConfiguration(Repository $config)
     {
         return $this;
     }
 
-    protected function getMetadataBag(Version $importedVersion)
+    protected function getMetadataBag(Version $importedVersion): MetadataBag
     {
         $this->loadData($importedVersion);
 
         return $this->reader->readData($this->data);
     }
 
-    private function loadData(Version $importedVersion)
+    private function loadData(Version $importedVersion): void
     {
-        if (isset($this->reader) && isset($this->data)) {
+        if (isset($this->reader, $this->data)) {
             return;
         }
+
         $info = [];
         $urlOrAbsolutePath = null;
         $configuration = null;
@@ -134,14 +143,26 @@ class IptcDataExtractor implements PostProcessorInterface
             $this->data = $info['APP13'];
             return;
         }
+
         if (Ifd0MetadataReader::isSupported()) {
-            $fr = $importedVersion->getFileResource();
-            $this->reader = new Ifd0MetadataReader();
-            $this->data = $fr->read();
-            return;
+            try {
+                $fr = $importedVersion->getFileResource();
+                $this->reader = new Ifd0MetadataReader();
+                $this->data = $fr->read();
+                return;
+            } catch (FileNotFoundException $e) {
+            }
         }
 
         $this->reader = new DefaultMetadataReader();
         $this->data = '';
+    }
+
+    /**
+     * @noinspection PhpIncompatibleReturnTypeInspection
+     */
+    protected function getFileAttributeKeyCategory(): FileCategory
+    {
+        return $this->fakc ??= $this->categoryService->getByHandle('file')->getController();
     }
 }

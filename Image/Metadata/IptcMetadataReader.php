@@ -5,12 +5,13 @@ namespace Xanweb\C5\Foundation\Image\Metadata;
 use Imagine\Exception\NotSupportedException;
 use Imagine\Image\Metadata\AbstractMetadataReader;
 use Imagine\Image\Metadata\MetadataBag;
-use Imagine\Utils\ErrorHandling;
 
 class IptcMetadataReader extends AbstractMetadataReader
 {
+    private static bool $isSupported;
+
     /**
-     * @throws \Imagine\Exception\NotSupportedException
+     * @throws NotSupportedException
      */
     public function __construct()
     {
@@ -25,7 +26,7 @@ class IptcMetadataReader extends AbstractMetadataReader
      *
      * @return string empty string if the reader is available
      */
-    public static function getUnsupportedReason()
+    public static function getUnsupportedReason(): string
     {
         if (!function_exists('iptcparse')) {
             return 'The PHP iptc extension is required to use the IptcMetadataReader';
@@ -39,9 +40,9 @@ class IptcMetadataReader extends AbstractMetadataReader
      *
      * @return bool
      */
-    public static function isSupported()
+    public static function isSupported(): bool
     {
-        return static::getUnsupportedReason() === '';
+        return self::$isSupported ??= static::getUnsupportedReason() === '';
     }
 
     /**
@@ -49,9 +50,9 @@ class IptcMetadataReader extends AbstractMetadataReader
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromFile()
      */
-    protected function extractFromFile($file)
+    protected function extractFromFile($file): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -59,16 +60,16 @@ class IptcMetadataReader extends AbstractMetadataReader
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromData()
      */
-    protected function extractFromData($data)
+    protected function extractFromData($data): array
     {
         $iptc = iptcparse($data);
         $iptcData = [];
-        foreach ($this->getIptcKeys() as $key => $name)
-        {
+        foreach ($this->getIptcKeys() as $key => $name) {
             if (isset($iptc[$key])) {
                 $iptcData[$name] = $iptc[$key];
             }
         }
+
         return $iptcData;
     }
 
@@ -77,16 +78,21 @@ class IptcMetadataReader extends AbstractMetadataReader
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromStream()
      */
-    protected function extractFromStream($resource)
+    protected function extractFromStream($resource): array
     {
-        return array();
+        return [];
     }
 
-    public function readData($data, $originalResource = null)
+    public function readData($data, $originalResource = null): MetadataBag
     {
         return new MetadataBag($this->extractFromData($data));
     }
 
+    /**
+     * Get Supported Keys.
+     *
+     * @return array<string, string>
+     */
     private function getIptcKeys(): array
     {
         return [

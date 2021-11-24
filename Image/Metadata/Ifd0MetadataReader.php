@@ -5,12 +5,13 @@ namespace Xanweb\C5\Foundation\Image\Metadata;
 use Imagine\Exception\NotSupportedException;
 use Imagine\Image\Metadata\AbstractMetadataReader;
 use Imagine\Image\Metadata\MetadataBag;
-use Imagine\Utils\ErrorHandling;
 
 class Ifd0MetadataReader extends AbstractMetadataReader
 {
+    private static bool $isSupported;
+
     /**
-     * @throws \Imagine\Exception\NotSupportedException
+     * @throws NotSupportedException
      */
     public function __construct()
     {
@@ -25,15 +26,17 @@ class Ifd0MetadataReader extends AbstractMetadataReader
      *
      * @return string empty string if the reader is available
      */
-    public static function getUnsupportedReason()
+    public static function getUnsupportedReason(): string
     {
         if (!function_exists('exif_read_data')) {
             return 'The PHP EXIF extension is required to use the ExifMetadataReader';
         }
+
         if (!in_array('data', stream_get_wrappers(), true)) {
             return 'The data:// stream wrapper must be enabled';
         }
-        if (in_array(ini_get('allow_url_fopen'), array('', '0', 0), true)) {
+
+        if (in_array(ini_get('allow_url_fopen'), ['', '0', 0], true)) {
             return 'The allow_url_fopen php.ini configuration key must be set to 1';
         }
 
@@ -45,9 +48,9 @@ class Ifd0MetadataReader extends AbstractMetadataReader
      *
      * @return bool
      */
-    public static function isSupported()
+    public static function isSupported(): bool
     {
-        return static::getUnsupportedReason() === '';
+        return self::$isSupported ??= static::getUnsupportedReason() === '';
     }
 
     /**
@@ -55,9 +58,9 @@ class Ifd0MetadataReader extends AbstractMetadataReader
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromFile()
      */
-    protected function extractFromFile($file)
+    protected function extractFromFile($file): array
     {
-        return array();
+        return [];
     }
 
     /**
@@ -65,16 +68,16 @@ class Ifd0MetadataReader extends AbstractMetadataReader
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromData()
      */
-    protected function extractFromData($data)
+    protected function extractFromData($data): array
     {
-        $metadata = $this->doReadData($data);
         $ifd0Data = [];
-        foreach ($this->getKeys() as $key => $name)
-        {
+        $metadata = $this->doReadData($data);
+        foreach ($this->getKeys() as $key => $name) {
             if (isset($metadata[$key])) {
                 $ifd0Data[$name] = $metadata[$key];
             }
         }
+
         return $ifd0Data;
     }
 
@@ -83,16 +86,26 @@ class Ifd0MetadataReader extends AbstractMetadataReader
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromStream()
      */
-    protected function extractFromStream($resource)
+    protected function extractFromStream($resource): array
     {
-        return array();
+        return [];
     }
 
-    public function readData($data, $originalResource = null)
+    /**
+     * {@inheritdoc}
+     *
+     * @see \Imagine\Image\Metadata\AbstractMetadataReader::readData()
+     */
+    public function readData($data, $originalResource = null): MetadataBag
     {
         return new MetadataBag($this->extractFromData($data));
     }
 
+    /**
+     * Get Supported Keys.
+     *
+     * @return array<string, string>
+     */
     private function getKeys(): array
     {
         return [
@@ -113,15 +126,15 @@ class Ifd0MetadataReader extends AbstractMetadataReader
      *
      * @return array
      */
-    private function doReadData($data)
+    private function doReadData(string $data): array
     {
-        if (substr($data, 0, 2) === 'II') {
+        if (strpos($data, 'II') === 0) {
             $mime = 'image/tiff';
         } else {
             $mime = 'image/jpeg';
         }
 
-        return $this->extract('data://' . $mime . ';base64,' . base64_encode($data));
+        return $this->extract("data://$mime;base64," . base64_encode($data));
     }
 
     /**
@@ -131,17 +144,16 @@ class Ifd0MetadataReader extends AbstractMetadataReader
      *
      * @return array
      */
-    private function extract($path)
+    private function extract(string $path): array
     {
         try {
             $metadata = exif_read_data($path,  null, true);
-        } catch (\Exception $e) {
-            $metadata = false;
         } catch (\Throwable $e) {
-            $metadata = false;
+            $metadata = null;
         }
+
         if (!is_array($metadata) || !isset($metadata['IFD0'])) {
-            return array();
+            return [];
         }
 
         return $metadata['IFD0'];
