@@ -100,8 +100,8 @@ class DataExtractor implements PostProcessorInterface, LoggerAwareInterface
     public function readConfiguration(Repository $config)
     {
         $this->fieldsMapping = $config->get('xanweb.file_manager.images.data_extractor', [
-            'document_title' => 'title',
-            'caption' => 'description',
+            'image_title' => 'title',
+            'comments' => 'description',
             'keywords' => 'tags',
         ]);
 

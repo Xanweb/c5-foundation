@@ -110,12 +110,12 @@ class Ifd0MetadataReader extends AbstractMetadataReader
     private function getKeys(): array
     {
         return [
-            'Title' => 'document_title',
-            'Artist' => 'author_byline',
+            'Title' => 'image_title',
+            'Artist' => 'artist',
             'Author' => 'author_title',
             'Keywords' => 'keywords',
             'ImageDescription' => 'image_description',
-            'Comments' => 'caption',
+            'Comments' => 'comments',
             'Copyright' => 'copyright',
         ];
     }
