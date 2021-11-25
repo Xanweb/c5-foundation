@@ -37,7 +37,7 @@ class DataExtractor implements PostProcessorInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @see PostProcessorInterface::getPostProcessPriority()
      */
@@ -47,7 +47,7 @@ class DataExtractor implements PostProcessorInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @see PostProcessorInterface::shouldPostProcess()
      */
@@ -57,7 +57,7 @@ class DataExtractor implements PostProcessorInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @see PostProcessorInterface::postProcess()
      */
@@ -93,7 +93,7 @@ class DataExtractor implements PostProcessorInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @see ProcessorInterface::readConfiguration()
      */
@@ -109,7 +109,7 @@ class DataExtractor implements PostProcessorInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @see LoggerAwareInterface::getLoggerChannel()
      */

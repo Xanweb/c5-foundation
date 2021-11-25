@@ -64,7 +64,7 @@ class Ifd0MetadataReader extends AbstractMetadataReader
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromFile()
      */
@@ -74,7 +74,7 @@ class Ifd0MetadataReader extends AbstractMetadataReader
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromData()
      */
