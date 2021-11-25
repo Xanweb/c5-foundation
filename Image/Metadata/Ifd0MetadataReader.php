@@ -56,6 +56,16 @@ class Ifd0MetadataReader extends AbstractMetadataReader
     /**
      * {@inheritdoc}
      *
+     * @see \Imagine\Image\Metadata\AbstractMetadataReader::readData()
+     */
+    public function readData($data, $originalResource = null): MetadataBag
+    {
+        return new MetadataBag($this->extractFromData($data));
+    }
+
+    /**
+     * @inheritdoc
+     *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromFile()
      */
     protected function extractFromFile($file): array
@@ -64,7 +74,7 @@ class Ifd0MetadataReader extends AbstractMetadataReader
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      *
      * @see \Imagine\Image\Metadata\AbstractMetadataReader::extractFromData()
      */
@@ -74,7 +84,8 @@ class Ifd0MetadataReader extends AbstractMetadataReader
         $metadata = $this->doReadData($data);
         foreach ($this->getKeys() as $key => $name) {
             if (isset($metadata[$key])) {
-                $ifd0Data[$name] = $metadata[$key];
+                $val = trim($metadata[$key]);
+                $ifd0Data[$name] = mb_convert_encoding($val, 'UTF-8', mb_detect_encoding($val, 'auto'));
             }
         }
 
@@ -89,16 +100,6 @@ class Ifd0MetadataReader extends AbstractMetadataReader
     protected function extractFromStream($resource): array
     {
         return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see \Imagine\Image\Metadata\AbstractMetadataReader::readData()
-     */
-    public function readData($data, $originalResource = null): MetadataBag
-    {
-        return new MetadataBag($this->extractFromData($data));
     }
 
     /**
@@ -147,15 +148,11 @@ class Ifd0MetadataReader extends AbstractMetadataReader
     private function extract(string $path): array
     {
         try {
-            $metadata = exif_read_data($path,  null, true);
+            $metadata = exif_read_data($path, 'IFD0', true);
         } catch (\Throwable $e) {
-            $metadata = null;
+            $metadata = false;
         }
 
-        if (!is_array($metadata) || !isset($metadata['IFD0'])) {
-            return [];
-        }
-
-        return $metadata['IFD0'];
+        return $metadata ? $metadata['IFD0'] : [];
     }
 }

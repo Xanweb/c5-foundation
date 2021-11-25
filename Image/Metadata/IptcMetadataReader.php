@@ -8,6 +8,7 @@ use Imagine\Image\Metadata\MetadataBag;
 
 class IptcMetadataReader extends AbstractMetadataReader
 {
+    private const IPTC_CODE_CHARACTER_SET = '1#090';
     private static bool $isSupported;
 
     /**
@@ -45,6 +46,11 @@ class IptcMetadataReader extends AbstractMetadataReader
         return self::$isSupported ??= static::getUnsupportedReason() === '';
     }
 
+    public function readData($data, $originalResource = null): MetadataBag
+    {
+        return new MetadataBag($this->extractFromData($data));
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -63,10 +69,12 @@ class IptcMetadataReader extends AbstractMetadataReader
     protected function extractFromData($data): array
     {
         $iptc = iptcparse($data);
+        $isUtf8Encoded = isset($iptc[self::IPTC_CODE_CHARACTER_SET]) && $iptc[self::IPTC_CODE_CHARACTER_SET][0] === "\x1b%G";
+
         $iptcData = [];
         foreach ($this->getIptcKeys() as $key => $name) {
             if (isset($iptc[$key])) {
-                $iptcData[$name] = $iptc[$key];
+                $iptcData[$name] = $isUtf8Encoded ? utf8_encode($iptc[$key]) : $iptc[$key];
             }
         }
 
@@ -81,11 +89,6 @@ class IptcMetadataReader extends AbstractMetadataReader
     protected function extractFromStream($resource): array
     {
         return [];
-    }
-
-    public function readData($data, $originalResource = null): MetadataBag
-    {
-        return new MetadataBag($this->extractFromData($data));
     }
 
     /**
@@ -114,7 +117,7 @@ class IptcMetadataReader extends AbstractMetadataReader
             '2#116' => 'copyright',
             '2#120' => 'caption',
             '2#122' => 'caption_writer',
-            '2#025' => 'keywords'
+            '2#025' => 'keywords',
         ];
     }
 }
