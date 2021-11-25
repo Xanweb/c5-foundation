@@ -52,11 +52,6 @@ abstract class ApplicationBooter
         }
     }
 
-    private static function throwInvalidClassRuntimeException(string $relatedMethod, $targetClass, string $requiredClass): void
-    {
-        throw new \RuntimeException(t('%s:%s - `%s` should be an instance of `%s`', static::class, $relatedMethod, (string) $targetClass, $requiredClass));
-    }
-
     abstract protected static function _boot(Application $app): void;
 
     /**
@@ -77,5 +72,10 @@ abstract class ApplicationBooter
     protected static function getEventSubscribers(): array
     {
         return [];
+    }
+
+    private static function throwInvalidClassRuntimeException(string $relatedMethod, $targetClass, string $requiredClass): void
+    {
+        throw new \RuntimeException(t('%s:%s - `%s` should be an instance of `%s`', static::class, $relatedMethod, (string) $targetClass, $requiredClass));
     }
 }

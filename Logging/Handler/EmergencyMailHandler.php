@@ -3,9 +3,9 @@
 namespace Xanweb\C5\Foundation\Logging\Handler;
 
 use Concrete\Core\Config\Repository\Repository as ConfigRepository;
-use Concrete\Core\User\User;
 use Concrete\Core\Support\Facade\Application;
 use Concrete\Core\Support\Facade\Config;
+use Concrete\Core\User\User;
 use Monolog\Formatter\HtmlFormatter;
 use Monolog\Handler\MailHandler;
 use Monolog\Logger;
@@ -40,6 +40,22 @@ class EmergencyMailHandler extends MailHandler
         $this->reportEmail = $reportMailAdr;
     }
 
+    /**
+     * Register Handler using "xanweb.email_logging.report_email" config.
+     */
+    public static function register(): void
+    {
+        $app = Application::getFacadeApplication();
+        $app['director']->addListener('on_logger_create', function ($le) use ($app) {
+            $reportEmail = $app['config']->get('xanweb.email_logging.report_email');
+            if (!$reportEmail) {
+                throw new \RuntimeException(t('Report Email is not defined in `xanweb.email_logging.report_email` config.'));
+            }
+
+            $le->getLogger()->pushHandler(new static($reportEmail));
+        });
+    }
+
     protected function send($content, array $records): void
     {
         if (!$this->canSend()) {
@@ -60,6 +76,7 @@ class EmergencyMailHandler extends MailHandler
         $mh->setSubject($_SERVER['SERVER_NAME'] . ': Exception occurred');
         $mh->setBodyHTML($user . '<br>' . $url . '<br>' . $refererURL . '<br>' . $method . '<br>' . $content);
         $mh->to($this->reportEmail);
+
         try {
             $mh->sendMail();
         } catch (\Throwable $e) {
@@ -90,21 +107,5 @@ class EmergencyMailHandler extends MailHandler
         }
 
         return false;
-    }
-
-    /**
-     * Register Handler using "xanweb.email_logging.report_email" config
-     */
-    public static function register(): void
-    {
-        $app = Application::getFacadeApplication();
-        $app['director']->addListener('on_logger_create', function ($le) use ($app) {
-            $reportEmail = $app['config']->get('xanweb.email_logging.report_email');
-            if (!$reportEmail) {
-                throw new \RuntimeException(t('Report Email is not defined in `xanweb.email_logging.report_email` config.'));
-            }
-
-            $le->getLogger()->pushHandler(new static($reportEmail));
-        });
     }
 }

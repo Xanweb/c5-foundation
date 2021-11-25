@@ -6,8 +6,8 @@ use Concrete\Core\Foundation\ClassAliasList;
 use Concrete\Core\Http\Request as HttpRequest;
 use Concrete\Core\Multilingual\Page\Section\Section;
 use Concrete\Core\User\User;
-use Xanweb\Common\Service\Provider as FoundationProvider;
 use Xanweb\C5\Request\ServiceProvider as RequestServiceProvider;
+use Xanweb\Common\Service\Provider as FoundationProvider;
 
 class ServiceProvider extends FoundationProvider
 {
@@ -22,7 +22,7 @@ class ServiceProvider extends FoundationProvider
             $this->app->alias($class, $alias);
         }
 
-        $this->app->bind('site/active', fn($app) => $app['site']->getSite());
+        $this->app->bind('site/active', fn ($app) => $app['site']->getSite());
 
         ClassAliasList::getInstance()->registerMultiple([
             'MultilingualSection' => Section::class,

@@ -53,7 +53,7 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function current(): string
     {
@@ -63,7 +63,8 @@ class UrlGenerator implements UrlGeneratorContract
     /**
      * Get the URL for the previous request.
      *
-     * @param  mixed  $fallback
+     * @param mixed $fallback
+     *
      * @return string
      */
     public function previous($fallback = false): string
@@ -75,7 +76,7 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function to($path, $extra = [], $secure = null)
     {
@@ -83,7 +84,7 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function secure($path, $parameters = [])
     {
@@ -91,7 +92,7 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function asset($path, $secure = null): string
     {
@@ -99,7 +100,7 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function route($name, $parameters = [], $absolute = true)
     {
@@ -119,7 +120,7 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function action($action, $parameters = [], $absolute = true)
     {
@@ -136,7 +137,7 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setRootControllerNamespace($rootNamespace)
     {

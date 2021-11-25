@@ -19,8 +19,8 @@ class Site
     {
         PunicData::setOverrides([
             'calendar' => [
-                'dateFormats' => ['short' => $format]
-            ]
+                'dateFormats' => ['short' => $format],
+            ],
         ], $locale);
     }
 }
