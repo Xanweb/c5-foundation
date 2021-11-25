@@ -32,7 +32,7 @@ Here is the list of available information keys:
 * `author_title`: author name
 * `keywords`
 * `image_description`
-* `caption`
+* `comments`
 * `copyright`
 
 The default mapping is like follows:
@@ -61,4 +61,5 @@ return [
             ]
         ],
     ],
+];
 ```
