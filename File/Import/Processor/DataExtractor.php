@@ -9,7 +9,11 @@ use Concrete\Core\Entity\File\Version;
 use Concrete\Core\File\Import\ImportingFile;
 use Concrete\Core\File\Import\ImportOptions;
 use Concrete\Core\File\Import\Processor\PostProcessorInterface;
+use Concrete\Core\Logging\Channels;
+use Concrete\Core\Logging\LoggerAwareInterface;
+use Concrete\Core\Logging\LoggerAwareTrait;
 use Concrete\Core\Support\Facade\Application;
+use Illuminate\Support\Str;
 use Imagine\Image\Metadata\DefaultMetadataReader;
 use Imagine\Image\Metadata\MetadataBag;
 use Imagine\Image\Metadata\MetadataReaderInterface;
@@ -17,11 +21,14 @@ use League\Flysystem\FileNotFoundException;
 use Xanweb\C5\Foundation\Image\Metadata\Ifd0MetadataReader;
 use Xanweb\C5\Foundation\Image\Metadata\IptcMetadataReader;
 
-class IptcDataExtractor implements PostProcessorInterface
+class DataExtractor implements PostProcessorInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     protected CategoryService $categoryService;
-    private MetadataReaderInterface $reader;
     private FileCategory $fakc;
+    private MetadataReaderInterface $reader;
+    private array $fieldsMapping;
     private string $data;
 
     public function __construct(CategoryService $categoryService)
@@ -30,7 +37,7 @@ class IptcDataExtractor implements PostProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @see PostProcessorInterface::getPostProcessPriority()
      */
@@ -40,7 +47,7 @@ class IptcDataExtractor implements PostProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @see PostProcessorInterface::shouldPostProcess()
      */
@@ -50,7 +57,7 @@ class IptcDataExtractor implements PostProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @see PostProcessorInterface::postProcess()
      */
@@ -59,45 +66,56 @@ class IptcDataExtractor implements PostProcessorInterface
         $metadataBag = $this->getMetadataBag($importedVersion);
         $category = $this->getFileAttributeKeyCategory();
 
-        if ($title = $metadataBag->get('document_title')) {
-            $importedVersion->updateTitle($title);
-            $key = $category->getAttributeKeyByHandle('alt');
-            if (is_object($key)) {
-                $importedVersion->setAttribute($key, $title);
+        foreach ($this->fieldsMapping as $key => $field) {
+            // Check if the field is defined
+            if (empty($value = $metadataBag->get($key))) {
+                continue;
             }
-        }
 
-        if ($caption = $metadataBag->get('caption')) {
-            $importedVersion->updateDescription($caption);
-        }
-
-        if ($keywords = $metadataBag->get('keywords')) {
-            $importedVersion->updateTags($keywords);
-        }
-
-        if ($author = $metadataBag->get('author_title')) {
-            $key = $category->getAttributeKeyByHandle('author');
-            if (is_object($key)) {
-                $importedVersion->setAttribute($key, $author);
-            }
-        }
-
-        if ($copyright = $metadataBag->get('copyright')) {
-            $key = $category->getAttributeKeyByHandle('copyright');
-            if (is_object($key)) {
-                $importedVersion->setAttribute($key, $copyright);
+            $fields = is_array($field) ? $field : [$field];
+            foreach ($fields as $_field) {
+                if (\str_starts_with($_field, 'ak_')) {
+                    $key = $category->getAttributeKeyByHandle(Str::substr($_field, 3));
+                    if ($key !== null) {
+                        $importedVersion->setAttribute($key, $value);
+                    } else {
+                        $this->logger->error(t('%s > Undefined attribute key `%s`.', __METHOD__, Str::substr($_field, 3)));
+                    }
+                } else {
+                    if (method_exists($importedVersion, $method = 'update' . Str::ucfirst($_field))) {
+                        $importedVersion->{$method}($value);
+                    } else {
+                        $this->logger->error(t('%s > Unknown property `%s`, unable to run `%s()` method.', __METHOD__, $_field, $method));
+                    }
+                }
             }
         }
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @see ProcessorInterface::readConfiguration()
      */
     public function readConfiguration(Repository $config)
     {
+        $this->fieldsMapping = $config->get('xanweb.file_manager.images.data_extractor', [
+            'document_title' => 'title',
+            'caption' => 'description',
+            'keywords' => 'tags',
+        ]);
+
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @see LoggerAwareInterface::getLoggerChannel()
+     */
+    public function getLoggerChannel(): string
+    {
+        return Channels::CHANNEL_FILES;
     }
 
     protected function getMetadataBag(Version $importedVersion): MetadataBag
@@ -105,6 +123,14 @@ class IptcDataExtractor implements PostProcessorInterface
         $this->loadData($importedVersion);
 
         return $this->reader->readData($this->data);
+    }
+
+    /**
+     * @noinspection PhpIncompatibleReturnTypeInspection
+     */
+    protected function getFileAttributeKeyCategory(): FileCategory
+    {
+        return $this->fakc ??= $this->categoryService->getByHandle('file')->getController();
     }
 
     private function loadData(Version $importedVersion): void
@@ -125,9 +151,7 @@ class IptcDataExtractor implements PostProcessorInterface
         $cf = $app->make('helper/concrete/file');
         if ($configuration !== null) {
             if ($configuration->hasRelativePath()) {
-                $root = $configuration->getRootPath();
-                $path = $cf->prefix($importedVersion->getPrefix(), $importedVersion->getFileName());
-                $urlOrAbsolutePath = $root . '/' . $path;
+                $urlOrAbsolutePath = $configuration->getRootPath() . $cf->prefix($importedVersion->getPrefix(), $importedVersion->getFileName());
             } elseif ($configuration->hasPublicURL()) {
                 $urlOrAbsolutePath = $configuration->getPublicURLToFile($cf->prefix($importedVersion->getPrefix(), $importedVersion->getFileName()));
             }
@@ -141,6 +165,7 @@ class IptcDataExtractor implements PostProcessorInterface
         if ($size !== false && isset($info['APP13']) && IptcMetadataReader::isSupported()) {
             $this->reader = new IptcMetadataReader();
             $this->data = $info['APP13'];
+
             return;
         }
 
@@ -149,6 +174,7 @@ class IptcDataExtractor implements PostProcessorInterface
                 $fr = $importedVersion->getFileResource();
                 $this->reader = new Ifd0MetadataReader();
                 $this->data = $fr->read();
+
                 return;
             } catch (FileNotFoundException $e) {
             }
@@ -156,13 +182,5 @@ class IptcDataExtractor implements PostProcessorInterface
 
         $this->reader = new DefaultMetadataReader();
         $this->data = '';
-    }
-
-    /**
-     * @noinspection PhpIncompatibleReturnTypeInspection
-     */
-    protected function getFileAttributeKeyCategory(): FileCategory
-    {
-        return $this->fakc ??= $this->categoryService->getByHandle('file')->getController();
     }
 }
