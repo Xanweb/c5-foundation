@@ -153,6 +153,6 @@ class Ifd0MetadataReader extends AbstractMetadataReader
             $metadata = false;
         }
 
-        return $metadata ? $metadata['IFD0'] : [];
+        return ($metadata && is_array($metadata['IFD0'])) ? $metadata['IFD0'] : [];
     }
 }
