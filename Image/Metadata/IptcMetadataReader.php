@@ -116,7 +116,7 @@ class IptcMetadataReader extends AbstractMetadataReader
             '2#115' => 'photo_source',
             '2#116' => 'copyright',
             '2#120' => 'comments',
-            '2#122' => 'comments_writer',
+            //'2#122' => 'comments_writer',
             '2#025' => 'keywords',
         ];
     }
