@@ -74,7 +74,7 @@ class IptcMetadataReader extends AbstractMetadataReader
         $iptcData = [];
         foreach ($this->getIptcKeys() as $key => $name) {
             if (isset($iptc[$key])) {
-                $iptcData[$name] = $isUtf8Encoded ? utf8_encode($iptc[$key]) : $iptc[$key];
+                $iptcData[$name] = ($isUtf8Encoded && is_string($iptc[$key])) ? utf8_encode($iptc[$key]) : $iptc[$key];
             }
         }
 
