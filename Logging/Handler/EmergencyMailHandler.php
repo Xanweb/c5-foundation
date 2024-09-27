@@ -66,7 +66,7 @@ class EmergencyMailHandler extends MailHandler
         $u = $app->make(User::class);
         $user = t('User: %s', $u->isRegistered() ? $u->getUserName() : t('Guest'));
 
-        $refererURL = t('Referer URL: %s', $_SERVER['HTTP_REFERER']);
+        $refererURL = t('Referer URL: %s', $_SERVER['HTTP_REFERER'] ?? '');
         $url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
         $method = 'Method: ' . $_SERVER['REQUEST_METHOD'];
